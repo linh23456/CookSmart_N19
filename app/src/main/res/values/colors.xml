@@ -2,4 +2,18 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="fb">#3b5998</color>
+    <color name="google">#d34836</color>
+    <color name="colorPrimary">#FFD96D</color>
+    <color name="colorPrimaryDark">#F1C85D</color>
+    <color name="colorAccent">#4D7BFF</color>
+
+    <color name="tab_selected">#000000</color>
+    <color name="tab_unselected">#888888</color>
+
+    <color name="post_green">#8DE8C3</color>
+    <color name="post_blue">#A8E6E2</color>
+
+    <color name="heart_color">#FF5555</color>
+    <color name="bookmark_color">#4D7BFF</color>
 </resources>
