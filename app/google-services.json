@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "470839543894",
+    "project_id": "smartcook-d8125",
+    "storage_bucket": "smartcook-d8125.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470839543894:android:161dea20b400cfecc613f7",
+        "android_client_info": {
+          "package_name": "com.example.cooksmart_n19"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "470839543894-o25tvd6l1ra3bo9tdk2338b63244ave9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cooksmart_n19",
+            "certificate_hash": "cf9ccdf32cc8972d8a4b76d6cf0c4b66fae7e358"
+          }
+        },
+        {
+          "client_id": "470839543894-ndv9otfojukqaurhl2e4lrejjscjm5v9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6dvEYvEP-cfzTn_wWLjpt5mk_xtLyYEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "470839543894-ndv9otfojukqaurhl2e4lrejjscjm5v9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
