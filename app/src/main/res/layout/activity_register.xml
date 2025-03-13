@@ -48,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Tên người dùng"
+                android:id="@+id/edt_username"
                 android:minHeight="48dp"
                 android:background="@null"
                 android:padding="8dp"
@@ -72,6 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
+                android:id="@+id/edt_email"
                 android:minHeight="48dp"
                 android:background="@null"
                 android:padding="8dp"
@@ -96,6 +98,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mật khẩu"
+                android:id="@+id/edt_password"
                 android:background="@null"
                 android:minHeight="48dp"
                 android:padding="8dp"
@@ -108,7 +111,8 @@
             android:layout_marginBottom="12dp"
             android:layout_gravity="center"
             android:width="1000dp"
-            android:text="Đăng nhập"
+            android:text="Đăng ký"
+            android:id="@+id/btn_register"
             android:textColor="#FFFFFF"
             app:backgroundTint="#FFA500" />
 
