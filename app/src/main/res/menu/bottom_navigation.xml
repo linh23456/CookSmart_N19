@@ -1,6 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/icHome"
+        android:title=""
+        android:icon="@drawable/ic_home" />
 
-</LinearLayout>
+    <item
+        android:id="@+id/icCommunity"
+        android:title=""
+        android:icon="@drawable/ic_community" />
+    <item
+        android:id="@+id/icMyRecipe"
+        android:title=""
+        android:icon="@drawable/ic_my_recipe" />
+    <item
+        android:id="@+id/icBookmark"
+        android:title=""
+        android:icon="@drawable/ic_bookmark" />
+    <item
+        android:id="@+id/icProfile"
+        android:title=""
+        android:icon="@drawable/ic_profile_user" />
+</menu>
