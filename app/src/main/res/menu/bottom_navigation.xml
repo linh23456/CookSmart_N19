@@ -1,23 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/icHome"
-        android:title=""
+        android:title="Home"
         android:icon="@drawable/ic_home" />
 
     <item
-        android:id="@+id/icCommunity"
-        android:title=""
-        android:icon="@drawable/ic_community" />
+        android:id="@+id/icSearch"
+        android:title="Search"
+        android:icon="@drawable/ic_search" />
     <item
         android:id="@+id/icMyRecipe"
-        android:title=""
-        android:icon="@drawable/ic_my_recipe" />
+        android:title="Favourite"
+        android:icon="@drawable/ic_heart" />
     <item
         android:id="@+id/icBookmark"
-        android:title=""
-        android:icon="@drawable/ic_bookmark" />
+        android:title="Explore"
+        android:icon="@drawable/ic_community" />
     <item
         android:id="@+id/icProfile"
-        android:title=""
+        android:title="Profile"
         android:icon="@drawable/ic_profile_user" />
 </menu>
