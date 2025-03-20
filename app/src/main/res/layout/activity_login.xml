@@ -8,7 +8,6 @@
     android:padding="16dp"
     android:id="@+id/login">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,9 +18,9 @@
         <ImageView
             android:layout_width="200dp"
             android:layout_height="180dp"
+            android:src="@drawable/logo_2"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/logo_2" />
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="12dp"
             android:gravity="center_vertical"
             android:background="@drawable/edit_text_bg">
 
@@ -46,10 +45,11 @@
                 android:layout_marginStart="8dp"/>
 
             <EditText
+                android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:hint="Email"
+                android:minHeight="48dp"
                 android:background="@null"
                 android:padding="8dp"
                 android:inputType="textEmailAddress"/>
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="16dp"
             android:gravity="center_vertical"
             android:background="@drawable/edit_text_bg">
 
@@ -70,6 +70,7 @@
                 android:layout_marginStart="8dp"/>
 
             <EditText
+                android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mật khẩu"
@@ -79,7 +80,17 @@
                 android:inputType="textPassword"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textViewForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quên mật khẩu?"
+            android:textColor="#FFA500"
+            android:layout_gravity="end"
+            android:layout_marginBottom="16dp"/>
+
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLogin"
             android:layout_width="150dp"
             android:layout_height="60dp"
             android:layout_marginBottom="12dp"
@@ -90,11 +101,27 @@
             app:backgroundTint="#FFA500" />
 
         <TextView
+            android:id="@+id/textViewRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chưa có tài khoản? Đăng ký"
+            android:textColor="#FFA500"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="16dp"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hoặc đăng nhập bằng"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -103,18 +130,21 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/imageViewFacebook"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_facebook"
                 android:layout_marginEnd="24dp"/>
 
             <ImageView
+                android:id="@+id/imageViewGoogle"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_google"
                 android:layout_marginEnd="24dp"/>
 
             <ImageView
+                android:id="@+id/imageViewPhone"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_phone"/>

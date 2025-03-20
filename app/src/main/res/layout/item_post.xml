@@ -29,6 +29,7 @@
             android:layout_marginStart="8dp"
             android:textSize="14sp"
             android:textStyle="bold"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/profile_image"
             app:layout_constraintTop_toTopOf="@id/profile_image"
@@ -66,9 +67,10 @@
                 android:padding="6dp">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_timer" />
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_timer"
+                    />
 
                 <TextView
                     android:id="@+id/cooking_time"
@@ -121,7 +123,7 @@
                     android:id="@+id/like_button"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_saved" />
+                    android:src="@drawable/ic_heart" />
 
                 <TextView
                     android:id="@+id/likes_count"

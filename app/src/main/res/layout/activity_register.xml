@@ -45,10 +45,10 @@
                 android:layout_marginStart="8dp"/>
 
             <EditText
+                android:id="@+id/editTextUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Tên người dùng"
-                android:id="@+id/edt_username"
                 android:minHeight="48dp"
                 android:background="@null"
                 android:padding="8dp"
@@ -70,10 +70,10 @@
                 android:layout_marginStart="8dp"/>
 
             <EditText
+                android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:id="@+id/edt_email"
                 android:minHeight="48dp"
                 android:background="@null"
                 android:padding="8dp"
@@ -95,10 +95,10 @@
                 android:layout_marginStart="8dp"/>
 
             <EditText
+                android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mật khẩu"
-                android:id="@+id/edt_password"
                 android:background="@null"
                 android:minHeight="48dp"
                 android:padding="8dp"
@@ -106,15 +106,40 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:layout_width="150dp"
+            android:id="@+id/buttonRegister"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_marginBottom="12dp"
             android:layout_gravity="center"
-            android:width="1000dp"
             android:text="Đăng ký"
-            android:id="@+id/btn_register"
             android:textColor="#FFFFFF"
-            app:backgroundTint="#FFA500" />
+            style="@style/Widget.MaterialComponents.Button"
+            app:backgroundTint="#FFA500"
+            app:rippleColor="#FFD700"
+            android:paddingHorizontal="32dp"/>
+
+        <TextView
+            android:id="@+id/textViewLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã có tài khoản? Đăng nhập"
+            android:textColor="#FFA500"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hoặc đăng nhập bằng"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -123,18 +148,21 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/imageViewFacebook"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_facebook"
                 android:layout_marginEnd="24dp"/>
 
             <ImageView
+                android:id="@+id/imageViewGoogle"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_google"
                 android:layout_marginEnd="24dp"/>
 
             <ImageView
+                android:id="@+id/imageViewPhone"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:src="@drawable/ic_phone"/>

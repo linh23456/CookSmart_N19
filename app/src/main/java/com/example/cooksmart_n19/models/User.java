@@ -1,6 +1,7 @@
 package com.example.cooksmart_n19.models;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
@@ -16,7 +17,6 @@ public class User {
     private String profileImageUrl;
     private List<String> favoriteRecipeIds = new ArrayList<>();
     private List<String> shoppingListIds = new ArrayList<>();
-    private Map<String, Object> preferences = new HashMap<>();
     @ServerTimestamp
     private Timestamp createdAt;
     @ServerTimestamp
@@ -56,9 +56,6 @@ public class User {
         return shoppingListIds;
     }
 
-    public Map<String, Object> getPreferences() {
-        return preferences;
-    }
 
     public void setUserId(String userId) {
         this.userId = userId;
@@ -88,10 +85,6 @@ public class User {
         this.shoppingListIds = shoppingListIds;
     }
 
-    public void setPreferences(Map<String, Object> preferences) {
-        this.preferences = preferences;
-    }
-
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public Timestamp getUpdatedAt() { return updatedAt; }
@@ -107,5 +100,11 @@ public class User {
         map.put("createdAt" , FieldValue.serverTimestamp());
         map.put("updateAt" , FieldValue.serverTimestamp());
         return map;
+    }
+
+    public User fromFirestore(DocumentSnapshot doc) {
+        User user = doc.toObject(User.class);
+        if (user != null) user.setUserId(doc.getId());
+        return user;
     }
 }
