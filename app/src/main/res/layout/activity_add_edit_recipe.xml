@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_floral_pattern"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Recipe Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutRecipeName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Tên món ăn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@android:color/holo_blue_light"
+            app:hintTextColor="@android:color/holo_blue_light">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextRecipeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Recipe Image -->
+        <ImageView
+            android:id="@+id/imageViewRecipe"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/rice"
+            android:contentDescription="Recipe Image"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutRecipeName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/buttonUploadImage"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Tải ảnh lên"
+            app:layout_constraintTop_toBottomOf="@id/imageViewRecipe"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Cost -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutCost"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Chi phí món ăn (VNĐ)"
+            app:layout_constraintTop_toBottomOf="@id/buttonUploadImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@android:color/holo_blue_light"
+            app:hintTextColor="@android:color/holo_blue_light">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextCost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Cooking Time -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutCookingTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Thời gian nấu ăn"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutCost"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@android:color/holo_blue_light"
+            app:hintTextColor="@android:color/holo_blue_light">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextCookingTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Difficulty -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayoutDifficulty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Độ khó"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutCookingTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@android:color/holo_blue_light"
+            app:hintTextColor="@android:color/holo_blue_light">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextDifficulty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Ingredients Section -->
+        <TextView
+            android:id="@+id/textViewIngredientsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Nguyên liệu"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/textInputLayoutDifficulty"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewIngredients"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/textViewIngredientsLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/buttonAddIngredient"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="+ Thêm nguyên liệu"
+            android:textColor="@android:color/holo_blue_light"
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewIngredients"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Steps Section -->
+        <TextView
+            android:id="@+id/textViewStepsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Các bước nấu ăn"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/buttonAddIngredient"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSteps"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/textViewStepsLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/buttonAddStep"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="+ Thêm bước"
+            android:textColor="@android:color/holo_blue_light"
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewSteps"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Save Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:text="Lưu"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@android:color/holo_blue_light"
+            app:layout_constraintTop_toBottomOf="@id/buttonAddStep"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Recipe Image -->
+        <ImageView
+            android:id="@+id/imageViewRecipe"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/rice"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="Recipe Image" />
+
+        <!-- Recipe Name -->
+        <TextView
+            android:id="@+id/textViewRecipeName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            tools:text="Tên công thức mẫu"
+            app:layout_constraintTop_toBottomOf="@id/imageViewRecipe"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Recipe Description -->
+        <TextView
+            android:id="@+id/textViewRecipeDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            tools:text="Mô tả ngắn gọn về công thức ở đây. Mô tả này có thể khá dài nhưng sẽ được cắt ngắn."
+            app:layout_constraintTop_toBottomOf="@id/textViewRecipeName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Additional Info (e.g., Cooking Time and Difficulty) -->
+        <LinearLayout
+            android:id="@+id/layoutRecipeInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/textViewRecipeDescription"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Cooking Time -->
+            <TextView
+                android:id="@+id/textViewCookingTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableStart="@android:drawable/ic_menu_recent_history"
+                android:drawablePadding="4dp"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                tools:text="30 phút"
+                android:gravity="start" />
+
+            <!-- Difficulty -->
+            <TextView
+                android:id="@+id/textViewDifficulty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableStart="@android:drawable/ic_menu_info_details"
+                android:drawablePadding="4dp"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                tools:text="Dễ"
+                android:gravity="start" />
+        </LinearLayout>
+
+        <!-- Staff Actions (Edit/Delete Buttons) -->
+        <LinearLayout
+            android:id="@+id/layoutStaffActions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/layoutRecipeInfo"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonEditRecipe"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Sửa"
+                android:textColor="@android:color/holo_blue_dark" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonDeleteRecipe"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xóa"
+                android:textColor="@android:color/holo_red_dark" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

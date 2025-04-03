@@ -3,12 +3,228 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ProfileFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@android:color/white">
+
+        <!-- Header: "Hồ sơ cá nhân" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hồ sơ cá nhân"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- User Info Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical">
+
+            <!-- Profile Picture -->
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_profile_placeholder"
+                app:tint="@android:color/darker_gray"
+                android:contentDescription="Profile Picture" />
+
+            <!-- User Name and Edit Button -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:gravity="center">
+
+                <!-- User Name -->
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tên tài khoản"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" />
+
+                <!-- Edit Button -->
+                <Button
+                    android:id="@+id/edit_profile_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Chỉnh sửa"
+                    android:textSize="14sp"
+                    android:backgroundTint="#FF9800"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tài khoản Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Tài khoản"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- Trang cá nhân -->
+        <LinearLayout
+            android:id="@+id/personal_page_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_manage"
+                app:tint="@android:color/black"
+                android:contentDescription="Personal Page Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Trang cá nhân"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- Thông báo -->
+        <LinearLayout
+            android:id="@+id/notifications_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                app:tint="@android:color/black"
+                android:contentDescription="Notifications Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Thông báo"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- Đề xuất Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Đề xuất"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- Đánh giá ứng dụng -->
+        <LinearLayout
+            android:id="@+id/rate_app_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/btn_star"
+                app:tint="@android:color/black"
+                android:contentDescription="Rate App Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Đánh giá ứng dụng"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- Thông tin Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Thông tin"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- Thông tin ứng dụng -->
+        <LinearLayout
+            android:id="@+id/app_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                app:tint="@android:color/black"
+                android:contentDescription="App Info Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Thông tin ứng dụng"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- Đăng xuất-->
+        <LinearLayout
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_logout"
+                app:tint="@android:color/black"
+                android:contentDescription="App Info Icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Đăng xuất"
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

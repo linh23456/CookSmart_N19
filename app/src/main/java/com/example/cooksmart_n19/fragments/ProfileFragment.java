@@ -1,20 +1,22 @@
 package com.example.cooksmart_n19.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.activities.MyRecipeActivity;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -22,23 +24,12 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ActivityResultLauncher<Intent> myRecipeLauncher;
 
     public ProfileFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -51,16 +42,27 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        myRecipeLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == getActivity().RESULT_OK) {
+                        // Handle the result from MyRecipeActivity
+                        Toast.makeText(getContext(), "Returned from MyRecipeActivity", Toast.LENGTH_SHORT).show();
+                        // TODO: Update UI if needed
+                    }
+                });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        LinearLayout personalLayout = view.findViewById(R.id.personal_page_layout);
+        personalLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), MyRecipeActivity.class);
+            startActivity(intent);
+        });
+        return view;
     }
 }
