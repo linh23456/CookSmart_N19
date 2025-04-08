@@ -13,13 +13,26 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <!-- Page Title -->
+        <TextView
+            android:id="@+id/textViewPageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thêm món ăn"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <!-- Recipe Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutRecipeName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Tên món ăn"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewPageTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:boxBackgroundMode="outline"
@@ -109,6 +122,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Độ khó"
+            app:endIconMode="dropdown_menu"
+            app:endIconTint="@android:color/holo_blue_light"
             app:layout_constraintTop_toBottomOf="@id/textInputLayoutCookingTime"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -116,12 +131,15 @@
             app:boxStrokeColor="@android:color/holo_blue_light"
             app:hintTextColor="@android:color/holo_blue_light">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/editTextDifficulty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textSize="16sp" />
+                android:inputType="none"
+                android:textSize="16sp"
+                android:dropDownHeight="wrap_content"
+                android:dropDownWidth="match_parent"
+                android:padding="18dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Ingredients Section -->
@@ -141,10 +159,11 @@
             android:id="@+id/recyclerViewIngredients"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/textViewIngredientsLabel"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/textViewIngredientsLabel" />
 
         <Button
             android:id="@+id/buttonAddIngredient"
@@ -192,7 +211,7 @@
 
         <!-- Save Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonSave"
+                android:id="@+id/buttonSave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -201,6 +220,17 @@
             android:textColor="@android:color/white"
             app:backgroundTint="@android:color/holo_blue_light"
             app:layout_constraintTop_toBottomOf="@id/buttonAddStep"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/saveProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

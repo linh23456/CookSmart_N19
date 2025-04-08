@@ -16,4 +16,8 @@
 
     <color name="heart_color">#FF5555</color>
     <color name="bookmark_color">#4D7BFF</color>
+
+    <color name="gray_600">#757575</color>
+    <color name="blue_500">#3B82F6</color>
+    <color name="red_500">#EF4444</color>
 </resources>

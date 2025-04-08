@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FavoriteFragment">
+    android:background="@android:color/white"
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Tiêu đề -->
     <TextView
+        android:id="@+id/textViewFavoritesTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Công thức yêu thích"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Thông báo khi danh sách yêu thích trống -->
+    <TextView
+        android:id="@+id/textViewEmptyFavorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bạn chưa có công thức yêu thích nào."
+        android:textSize="16sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <!-- RecyclerView để hiển thị danh sách công thức yêu thích -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewFavorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_below="@id/textViewFavoritesTitle"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"/>
 
-</FrameLayout>
+</RelativeLayout>

@@ -15,7 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CookSmart_N19"
+        tools:replace="android:fullBackupContent"
         tools:targetApi="31">
+
+        <activity
+            android:name=".activities.RecipeDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.AddEditRecipeActivity"
             android:exported="false" />
@@ -23,7 +28,10 @@
             android:name=".activities.MyRecipeActivity"
             android:exported="false" />
         <activity
-            android:name=".Demo"
+            android:name=".activities.auth.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.auth.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
@@ -34,12 +42,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.auth.LoginActivity"
-            android:exported="false" /> <!-- MainActivity - Đã xóa intent-filter -->
-        <activity
-            android:name=".activities.auth.RegisterActivity"
-            android:exported="true" />
     </application>
 
 </manifest>

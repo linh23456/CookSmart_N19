@@ -2,41 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:gravity="center_vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutIngredient"
+    <!-- Ingredient Name -->
+    <TextView
+        android:id="@+id/textViewIngredientName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="3"
-        android:hint="Nguyên liệu"
-        android:layout_marginEnd="8dp"
-        app:boxBackgroundMode="outline">
+        android:text="Nguyên liệu"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:layout_marginEnd="8dp" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextIngredient"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:textSize="14sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutQuantity"
+    <!-- Quantity and Unit -->
+    <TextView
+        android:id="@+id/textViewQuantity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="Số lượng"
-        app:boxBackgroundMode="outline">
+        android:text="Số lượng"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:gravity="end" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextQuantity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:textSize="14sp" />
-    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

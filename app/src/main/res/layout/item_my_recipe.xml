@@ -42,21 +42,23 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Recipe Description -->
+
+        <!-- Additional Info (e.g., Cooking Time and Difficulty) -->
         <TextView
             android:id="@+id/textViewRecipeDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:maxLines="2"
             android:ellipsize="end"
-            android:textSize="14sp"
+            android:maxLines="2"
             android:textColor="@android:color/darker_gray"
-            tools:text="Mô tả ngắn gọn về công thức ở đây. Mô tả này có thể khá dài nhưng sẽ được cắt ngắn."
-            app:layout_constraintTop_toBottomOf="@id/textViewRecipeName"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/textViewRecipeName"
+            tools:text="Mô tả ngắn gọn về công thức ở đây. Mô tả này có thể khá dài nhưng sẽ được cắt ngắn." />
 
-        <!-- Additional Info (e.g., Cooking Time and Difficulty) -->
         <LinearLayout
             android:id="@+id/layoutRecipeInfo"
             android:layout_width="0dp"
@@ -101,7 +103,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
-            android:visibility="gone"
             tools:visibility="visible"
             app:layout_constraintTop_toBottomOf="@id/layoutRecipeInfo"
             app:layout_constraintEnd_toEndOf="parent">

@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ExploreFragment">
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Thanh tìm kiếm và nút lọc -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-</FrameLayout>
+        <!-- Thanh tìm kiếm -->
+        <EditText
+            android:id="@+id/editTextSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/search_background"
+            android:hint="Tìm kiếm món ăn..."
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:textColor="@android:color/black"
+            android:textColorHint="#757575" />
+
+        <!-- Nút lọc -->
+        <ImageButton
+            android:id="@+id/buttonFilter"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:contentDescription="Lọc"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- RecyclerView hiển thị kết quả tìm kiếm -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSearchResults"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+</LinearLayout>
