@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- Hình ảnh công thức (nếu có) -->
+        <ImageView
+            android:id="@+id/imageViewRecipe"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/banh_mi"
+            android:layout_marginEnd="12dp"/>
+
+        <!-- Thông tin công thức -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Tiêu đề công thức -->
+            <TextView
+                android:id="@+id/textViewRecipeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên công thức"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
+            <!-- Thời gian nấu -->
+            <TextView
+                android:id="@+id/textViewCookingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thời gian: 30 phút"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="4dp"/>
+
+            <!-- Chi phí -->
+            <TextView
+                android:id="@+id/textViewCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chi phí: 50.000 VNĐ"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="4dp"/>
+
+        </LinearLayout>
+
+        <!-- Nút bỏ thích -->
+        <ImageButton
+            android:id="@+id/buttonUnlike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_heart_filled"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_gravity="center_vertical"
+            android:padding="8dp"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

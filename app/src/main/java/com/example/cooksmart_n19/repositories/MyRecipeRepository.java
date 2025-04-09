@@ -97,7 +97,6 @@ public class MyRecipeRepository {
         void onSuccess(List<Recipe> recipe);
         void onFailure(String errorMessage);
     }
-
     public interface SaveMyRecipeCallback{
         void onSuccess(Recipe recipe);
         void onError(String errorMessage);

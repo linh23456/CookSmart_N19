@@ -11,33 +11,33 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cooksmart_n19.R;
-import com.example.cooksmart_n19.fragments.HomeFragment;
+import com.example.cooksmart_n19.fragments.FavoriteFragment;
 import com.example.cooksmart_n19.models.Recipe;
 
 import java.util.List;
 
-public class ItemRecipeAdapter extends RecyclerView.Adapter<ItemRecipeAdapter.RecipeViewHolder> {
+public class FavoriteRecipeAdapter extends RecyclerView.Adapter<FavoriteRecipeAdapter.RecipeViewHolder> {
     private List<Recipe> recipes;
     private final OnItemClickListener onLikeClickListener;
     private final OnItemClickListener onDetailClickListener;
-    private final HomeFragment homeFragment;
+    private final FavoriteFragment favoriteFragment;
 
     public interface OnItemClickListener {
         void onItemClick(Recipe recipe, int position);
     }
 
-    public ItemRecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener) {
+    public FavoriteRecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener) {
         this.recipes = recipes;
         this.onLikeClickListener = onLikeClickListener;
         this.onDetailClickListener = onDetailClickListener;
-        this.homeFragment = null;
+        this.favoriteFragment = null;
     }
 
-    public ItemRecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener, HomeFragment homeFragment) {
+    public FavoriteRecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener, FavoriteFragment favoriteFragment) {
         this.recipes = recipes;
         this.onLikeClickListener = onLikeClickListener;
         this.onDetailClickListener = onDetailClickListener;
-        this.homeFragment = homeFragment;
+        this.favoriteFragment = favoriteFragment;
     }
 
     @NonNull
@@ -56,8 +56,8 @@ public class ItemRecipeAdapter extends RecyclerView.Adapter<ItemRecipeAdapter.Re
         holder.textViewCost.setText("Chi phí: " + recipe.getCost() + " VNĐ");
 
         // Cập nhật trạng thái nút "Thích"
-        if (homeFragment != null) {
-            boolean isLiked = homeFragment.isRecipeLiked(recipe.getRecipeId());
+        if (favoriteFragment != null) {
+            boolean isLiked = favoriteFragment.isRecipeLiked(recipe.getRecipeId());
             holder.buttonLike.setImageResource(isLiked ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
         }
 

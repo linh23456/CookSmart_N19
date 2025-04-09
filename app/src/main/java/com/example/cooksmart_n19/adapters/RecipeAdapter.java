@@ -4,63 +4,71 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.fragments.ExploreFragment;
+import com.example.cooksmart_n19.fragments.HomeFragment;
 import com.example.cooksmart_n19.models.Recipe;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
+public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
     private List<Recipe> recipes;
-    private OnLikeClickListener onLikeClickListener;
-    private OnViewRecipeClickListener onViewRecipeClickListener;
+    private final OnItemClickListener onLikeClickListener;
+    private final OnItemClickListener onDetailClickListener;
+    private final Object fragment; // Có thể là HomeFragment hoặc ExploreFragment
 
-    public interface OnLikeClickListener {
-        void onLikeClick(Recipe recipe, int position);
+    public interface OnItemClickListener {
+        void onItemClick(Recipe recipe, int position);
     }
 
-    public interface OnViewRecipeClickListener {
-        void onViewRecipeClick(Recipe recipe);
-    }
-
-    public RecipeAdapter(List<Recipe> recipes, OnLikeClickListener onLikeClickListener, OnViewRecipeClickListener onViewRecipeClickListener) {
-        this.recipes = recipes != null ? recipes : new ArrayList<>();
+    public RecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener) {
+        this.recipes = recipes;
         this.onLikeClickListener = onLikeClickListener;
-        this.onViewRecipeClickListener = onViewRecipeClickListener;
+        this.onDetailClickListener = onDetailClickListener;
+        this.fragment = null;
+    }
+
+    public RecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener, Object fragment) {
+        this.recipes = recipes;
+        this.onLikeClickListener = onLikeClickListener;
+        this.onDetailClickListener = onDetailClickListener;
+        this.fragment = fragment;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_recipe, parent, false);
-        return new ViewHolder(view);
+        return new RecipeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
-        holder.bind(recipe);
+        holder.textViewTitle.setText(recipe.getTitle());
+        holder.textViewDifficulty.setText("Độ khó: " + recipe.getDifficulty());
+        holder.textViewCookingTime.setText("Thời gian: " + recipe.getCookingTime() + " phút");
+        holder.textViewCost.setText("Chi phí: " + recipe.getCost() + " VNĐ");
 
-        // Sự kiện nhấn nút Thích
-        holder.imageViewLike.setOnClickListener(v -> {
-            if (onLikeClickListener != null) {
-                onLikeClickListener.onLikeClick(recipe, position);
+        if (fragment != null) {
+            boolean isLiked = false;
+            if (fragment instanceof HomeFragment) {
+                isLiked = ((HomeFragment) fragment).isRecipeLiked(recipe.getRecipeId());
+            } else if (fragment instanceof ExploreFragment) {
+                isLiked = ((ExploreFragment) fragment).isRecipeLiked(recipe.getRecipeId());
             }
-        });
+            holder.buttonLike.setImageResource(isLiked ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+        }
 
-        // Sự kiện nhấn nút Xem công thức
-        holder.buttonViewRecipe.setOnClickListener(v -> {
-            if (onViewRecipeClickListener != null) {
-                onViewRecipeClickListener.onViewRecipeClick(recipe);
-            }
-        });
+        holder.buttonLike.setOnClickListener(v -> onLikeClickListener.onItemClick(recipe, position));
+        holder.buttonDetail.setOnClickListener(v -> onDetailClickListener.onItemClick(recipe, position));
     }
 
     @Override
@@ -73,38 +81,22 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageViewRecipe;
+    static class RecipeViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
-        TextView textViewCookingTime;
         TextView textViewDifficulty;
+        TextView textViewCookingTime;
         TextView textViewCost;
-        ImageView imageViewLike;
-        Button buttonViewRecipe;
+        ImageView buttonLike;
+        Button buttonDetail;
 
-        ViewHolder(@NonNull View itemView) {
+        public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageViewRecipe = itemView.findViewById(R.id.imageViewRecipe);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
-            textViewCookingTime = itemView.findViewById(R.id.textViewCookingTime);
             textViewDifficulty = itemView.findViewById(R.id.textViewDifficulty);
+            textViewCookingTime = itemView.findViewById(R.id.textViewCookingTime);
             textViewCost = itemView.findViewById(R.id.textViewCost);
-            imageViewLike = itemView.findViewById(R.id.imageViewLike);
-            buttonViewRecipe = itemView.findViewById(R.id.buttonViewRecipe);
-        }
-
-        void bind(Recipe recipe) {
-            textViewTitle.setText(recipe.getTitle());
-            textViewCookingTime.setText("Thời gian: " + recipe.getCookingTime());
-            textViewDifficulty.setText("Mức độ: " + recipe.getDifficulty());
-            textViewCost.setText("Giá: " + String.format("%,.0f", recipe.getCost()) + " VNĐ");
-            imageViewLike.setImageResource(recipe.isLiked() ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
-
-            Glide.with(itemView.getContext())
-                    .load(recipe.getImage())
-                    .placeholder(R.drawable.banh_mi)
-                    .error(R.drawable.banh_mi)
-                    .into(imageViewRecipe);
+            buttonLike = itemView.findViewById(R.id.imageViewLike);
+            buttonDetail = itemView.findViewById(R.id.buttonViewRecipe);
         }
     }
 }

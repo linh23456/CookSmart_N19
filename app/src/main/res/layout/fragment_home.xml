@@ -14,6 +14,7 @@
 
         <!-- Tiêu đề: Công thức nổi bật -->
         <TextView
+            android:id="@+id/textViewFeaturedRecipes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -32,6 +33,7 @@
 
         <!-- Tiêu đề: Công thức gần đây -->
         <TextView
+            android:id="@+id/textViewRecentRecipes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

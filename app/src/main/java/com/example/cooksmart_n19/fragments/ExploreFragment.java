@@ -23,20 +23,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.activities.RecipeDetailActivity;
+import com.example.cooksmart_n19.adapters.ItemRecipeAdapter;
 import com.example.cooksmart_n19.adapters.RecipeAdapter;
 import com.example.cooksmart_n19.models.Recipe;
 import com.example.cooksmart_n19.repositories.RecipeRepository;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExploreFragment extends Fragment {
 
     private EditText editTextSearch;
     private ImageButton buttonFilter;
     private RecyclerView recyclerViewSearchResults;
-    private RecipeAdapter recipeAdapter;
+    private RecipeAdapter recipeAdapter; // Đổi tên để nhất quán với tên class
     private RecipeRepository recipeRepository;
     private List<Recipe> allRecipes;
     private String currentQuery = "";
@@ -44,6 +49,8 @@ public class ExploreFragment extends Fragment {
     private String currentCookingTimeSort = "Mặc định";
     private String currentCostSort = "Mặc định";
     private boolean isSearching = false;
+    private FirebaseAuth mAuth;
+    private Map<String, Boolean> likeStatusMap; // Thêm để quản lý trạng thái "thích"
 
     @Nullable
     @Override
@@ -61,13 +68,16 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mAuth = FirebaseAuth.getInstance();
         recipeRepository = new RecipeRepository();
         allRecipes = new ArrayList<>();
+        likeStatusMap = new HashMap<>(); // Khởi tạo likeStatusMap
 
         recipeAdapter = new RecipeAdapter(
                 allRecipes,
                 this::toggleLike,
-                this::navigateToRecipeDetail
+                this::navigateToRecipeDetail,
+                this // Truyền ExploreFragment để ItemRecipeAdapter có thể gọi isRecipeLiked()
         );
         recyclerViewSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewSearchResults.setAdapter(recipeAdapter);
@@ -93,30 +103,25 @@ public class ExploreFragment extends Fragment {
             return false;
         });
 
-        // Sự kiện cho nút Lọc
         buttonFilter.setOnClickListener(v -> showFilterDialog());
     }
 
     private void showFilterDialog() {
-        // Tạo dialog
         Dialog filterDialog = new Dialog(requireContext());
         filterDialog.setContentView(R.layout.dialog_filter);
 
-        // Đặt kích thước cho dialog
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.copyFrom(filterDialog.getWindow().getAttributes());
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         filterDialog.getWindow().setAttributes(params);
 
-        // Khởi tạo các Spinner trong dialog
         Spinner spinnerCookingTime = filterDialog.findViewById(R.id.spinnerCookingTime);
         Spinner spinnerDifficulty = filterDialog.findViewById(R.id.spinnerDifficulty);
         Spinner spinnerCost = filterDialog.findViewById(R.id.spinnerCost);
         Button buttonApply = filterDialog.findViewById(R.id.buttonApply);
         Button buttonCancel = filterDialog.findViewById(R.id.buttonCancel);
 
-        // Thiết lập Spinner cho thời gian nấu
         ArrayAdapter<CharSequence> cookingTimeAdapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 R.array.cooking_time_options,
@@ -124,11 +129,9 @@ public class ExploreFragment extends Fragment {
         );
         cookingTimeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCookingTime.setAdapter(cookingTimeAdapter);
-        // Đặt giá trị hiện tại
         int cookingTimePosition = cookingTimeAdapter.getPosition(currentCookingTimeSort);
         spinnerCookingTime.setSelection(cookingTimePosition);
 
-        // Thiết lập Spinner cho mức độ khó
         ArrayAdapter<CharSequence> difficultyAdapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 R.array.difficulty_options,
@@ -139,7 +142,6 @@ public class ExploreFragment extends Fragment {
         int difficultyPosition = difficultyAdapter.getPosition(currentDifficultyFilter);
         spinnerDifficulty.setSelection(difficultyPosition);
 
-        // Thiết lập Spinner cho giá
         ArrayAdapter<CharSequence> costAdapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 R.array.cost_options,
@@ -150,7 +152,6 @@ public class ExploreFragment extends Fragment {
         int costPosition = costAdapter.getPosition(currentCostSort);
         spinnerCost.setSelection(costPosition);
 
-        // Sự kiện cho nút Áp dụng
         buttonApply.setOnClickListener(v -> {
             currentCookingTimeSort = spinnerCookingTime.getSelectedItem().toString();
             currentDifficultyFilter = spinnerDifficulty.getSelectedItem().toString();
@@ -165,10 +166,8 @@ public class ExploreFragment extends Fragment {
             filterDialog.dismiss();
         });
 
-        // Sự kiện cho nút Hủy
         buttonCancel.setOnClickListener(v -> filterDialog.dismiss());
 
-        // Hiển thị dialog
         filterDialog.show();
     }
 
@@ -188,35 +187,102 @@ public class ExploreFragment extends Fragment {
 
         String normalizedQuery = query.toLowerCase();
         Log.d("ExploreFragment", "Searching for normalized query: " + normalizedQuery);
-        recipeRepository.searchRecipesByKeyword(normalizedQuery, currentCookingTimeSort, currentDifficultyFilter, currentCostSort, new RecipeRepository.RecipeCallback() {
+        recipeRepository.searchRecipesByKeyword(normalizedQuery, currentCookingTimeSort, currentDifficultyFilter, currentCostSort, recipes -> {
+            Log.d("ExploreFragment", "Recipes received: " + recipes.size());
+            allRecipes.clear();
+            allRecipes.addAll(recipes);
+            Log.d("ExploreFragment", "allRecipes updated: " + allRecipes.size());
+            recipeAdapter.updateRecipes(allRecipes);
+            if (recipes.isEmpty() && getContext() != null) {
+                Toast.makeText(getContext(), "Không tìm thấy công thức nào cho từ khóa: " + query, Toast.LENGTH_SHORT).show();
+            }
+            if (mAuth.getCurrentUser() != null) {
+                checkLikeStatus(recipes); // Kiểm tra trạng thái "thích" sau khi tải danh sách
+            }
+            isSearching = false;
+        });
+    }
+
+    private void checkLikeStatus(List<Recipe> recipes) {
+        if (recipes.isEmpty()) return;
+
+        String userId = mAuth.getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("user_likes")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    likeStatusMap.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String recipeId = document.getString("recipeId");
+                        if (recipeId != null) {
+                            likeStatusMap.put(recipeId, true);
+                        }
+                    }
+                    recipeAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Không thể kiểm tra trạng thái thích: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void toggleLike(Recipe recipe, int position) {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Vui lòng đăng nhập để thích công thức", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        boolean isCurrentlyLiked = likeStatusMap.getOrDefault(recipe.getRecipeId(), false);
+        recipeRepository.toggleLike(recipe.getRecipeId(), isCurrentlyLiked, new RecipeRepository.OnToggleLikeListener() {
             @Override
-            public void onSuccess(List<Recipe> recipes) {
-                Log.d("ExploreFragment", "Recipes received: " + recipes.size());
-                allRecipes.clear();
-                allRecipes.addAll(recipes);
-                Log.d("ExploreFragment", "allRecipes updated: " + allRecipes.size());
-                recipeAdapter.updateRecipes(allRecipes);
-                if (recipes.isEmpty() && getContext() != null) {
-                    Toast.makeText(getContext(), "Không tìm thấy công thức nào cho từ khóa: " + query, Toast.LENGTH_SHORT).show();
+            public void onSuccess(boolean newLikeStatus) {
+                likeStatusMap.put(recipe.getRecipeId(), newLikeStatus);
+                recipeAdapter.notifyItemChanged(position);
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Đã cập nhật trạng thái Thích", Toast.LENGTH_SHORT).show();
                 }
-                isSearching = false;
+            }
+
+            @Override
+            public void onFailure(String error) {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi khi cập nhật trạng thái Thích: " + error, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
-    private void toggleLike(Recipe recipe, int position) {
-        recipe.setLiked(!recipe.isLiked());
-        if (recipe.getRecipeId() != null) {
-            FirebaseFirestore.getInstance()
-                    .collection("recipes")
-                    .document(recipe.getRecipeId())
-                    .update("isLiked", recipe.isLiked());
+
+    private void navigateToRecipeDetail(Recipe recipe, int position) {
+        if (mAuth.getCurrentUser() == null) {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Vui lòng đăng nhập để xem chi tiết công thức", Toast.LENGTH_SHORT).show();
+            }
+            return;
         }
-        recipeAdapter.notifyItemChanged(position);
+
+        recipeRepository.getRecipeDetails(recipe.getRecipeId(), new RecipeRepository.OnRecipeDetailsListener() {
+            @Override
+            public void onSuccess(Recipe fullRecipe) {
+                Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
+                intent.putExtra("recipe", fullRecipe.toString());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
-    private void navigateToRecipeDetail(Recipe recipe) {
-        Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
-        intent.putExtra("recipe_id", recipe.getRecipeId());
-        startActivity(intent);
+
+    public boolean isRecipeLiked(String recipeId) {
+        return likeStatusMap.getOrDefault(recipeId, false);
     }
 
     @Override
