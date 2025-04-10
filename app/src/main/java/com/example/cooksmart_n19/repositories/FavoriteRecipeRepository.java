@@ -97,26 +97,6 @@ public class FavoriteRecipeRepository {
                 });
     }
 
-    public void unlikeRecipe(String recipeId, OnUnlikeListener listener) {
-        String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
-        if (userId == null) {
-            listener.onFailure("Người dùng chưa đăng nhập");
-            return;
-        }
-
-        String likeId = userId + "_" + recipeId;
-        db.collection("user_likes").document(likeId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Unliked recipe ID: " + recipeId);
-                    listener.onSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error unliking recipe ID: " + recipeId + ", " + e.getMessage());
-                    listener.onFailure(e.getMessage());
-                });
-    }
-
     public interface OnUnlikeListener {
         void onSuccess();
         void onFailure(String error);

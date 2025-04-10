@@ -41,7 +41,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_sort_by_size"
             android:contentDescription="Lọc"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:tint="@color/orange_500"/>
 
     </LinearLayout>
 

@@ -10,14 +10,19 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/logo_2"
+        android:label="Smart Cook"
+        android:roundIcon="@mipmap/logo_2"
         android:supportsRtl="true"
         android:theme="@style/Theme.CookSmart_N19"
         tools:replace="android:fullBackupContent"
         tools:targetApi="31">
-
+        <activity
+            android:name=".activities.CookingStepsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PrepareIngredientsActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.RecipeDetailActivity"
             android:exported="false" />

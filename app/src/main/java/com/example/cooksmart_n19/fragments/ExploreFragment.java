@@ -26,6 +26,7 @@ import com.example.cooksmart_n19.activities.RecipeDetailActivity;
 import com.example.cooksmart_n19.adapters.ItemRecipeAdapter;
 import com.example.cooksmart_n19.adapters.RecipeAdapter;
 import com.example.cooksmart_n19.models.Recipe;
+import com.example.cooksmart_n19.repositories.RecipeDetailsRepository;
 import com.example.cooksmart_n19.repositories.RecipeRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,6 +44,7 @@ public class ExploreFragment extends Fragment {
     private RecyclerView recyclerViewSearchResults;
     private RecipeAdapter recipeAdapter; // Đổi tên để nhất quán với tên class
     private RecipeRepository recipeRepository;
+    private RecipeDetailsRepository detailsRepository;
     private List<Recipe> allRecipes;
     private String currentQuery = "";
     private String currentDifficultyFilter = "Tất cả";
@@ -70,6 +72,7 @@ public class ExploreFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         recipeRepository = new RecipeRepository();
+        detailsRepository = new RecipeDetailsRepository();
         allRecipes = new ArrayList<>();
         likeStatusMap = new HashMap<>(); // Khởi tạo likeStatusMap
 
@@ -264,16 +267,16 @@ public class ExploreFragment extends Fragment {
             return;
         }
 
-        recipeRepository.getRecipeDetails(recipe.getRecipeId(), new RecipeRepository.OnRecipeDetailsListener() {
+        detailsRepository.getRecipeDetails(recipe.getRecipeId(), new RecipeDetailsRepository.OnRecipeDetailsListener() {
             @Override
             public void onSuccess(Recipe fullRecipe) {
                 Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
-                intent.putExtra("recipe", fullRecipe.toString());
+                intent.putExtra("recipe_id", recipe.getRecipeId());
                 startActivity(intent);
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onError(String error) {
                 if (getContext() != null) {
                     Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
                 }
