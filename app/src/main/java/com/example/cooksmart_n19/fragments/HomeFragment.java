@@ -195,6 +195,13 @@ public class HomeFragment extends Fragment {
         loadRecipes();
     }
 
+    private void navigateToRecipeDetail(Recipe recipe) {
+        // Sử dụng Intent để mở RecipeDetailActivity
+        Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
+        intent.putExtra("recipe_id", recipe.getRecipeId());
+        startActivity(intent);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -87,7 +87,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         this.recipes = newRecipes;
         notifyDataSetChanged();
     }
-
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
         TextView textViewDifficulty;
