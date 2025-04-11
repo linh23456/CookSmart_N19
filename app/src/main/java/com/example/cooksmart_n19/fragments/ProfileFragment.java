@@ -1,68 +1,82 @@
 package com.example.cooksmart_n19.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.Button;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.fragment.app.Fragment;
 
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.activities.EditProfileActivity;
 import com.example.cooksmart_n19.activities.MyRecipeActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+    private FirebaseAuth firebaseAuth;
     private ActivityResultLauncher<Intent> myRecipeLauncher;
 
     public ProfileFragment() {
-
+        // Required empty public constructor
     }
 
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 1. Khởi tạo FirebaseAuth
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        // 2. Đăng ký launcher để nhận kết quả từ MyRecipeActivity
         myRecipeLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == getActivity().RESULT_OK) {
-                        // Handle the result from MyRecipeActivity
-                        Toast.makeText(getContext(), "Returned from MyRecipeActivity", Toast.LENGTH_SHORT).show();
-                        // TODO: Update UI if needed
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Toast.makeText(getContext(), "Quay về từ MyRecipeActivity", Toast.LENGTH_SHORT).show();
+                        // TODO: refresh UI nếu cần
                     }
-                });
+                }
+        );
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate layout
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        // Ánh xạ nút "Chỉnh sửa hồ sơ"
+        Button editProfileBtn = view.findViewById(R.id.edit_profile_button);
+        editProfileBtn.setOnClickListener(v -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user == null) {
+                Toast.makeText(getContext(), "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Chỉ khởi chạy EditProfileActivity, không cần đính kèm data
+            Intent intent = new Intent(getActivity(), EditProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // Ánh xạ layout "Trang cá nhân" để mở MyRecipeActivity
         LinearLayout personalLayout = view.findViewById(R.id.personal_page_layout);
         personalLayout.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), MyRecipeActivity.class);
-            startActivity(intent);
+            myRecipeLauncher.launch(intent);
         });
+
         return view;
     }
 }
