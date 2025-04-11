@@ -16,7 +16,6 @@ public class User {
     private String phoneNumber;
     private String profileImageUrl;
     private List<String> favoriteRecipeIds = new ArrayList<>();
-    private List<String> shoppingListIds = new ArrayList<>();
     @ServerTimestamp
     private Timestamp createdAt;
     @ServerTimestamp
@@ -52,9 +51,6 @@ public class User {
         return favoriteRecipeIds;
     }
 
-    public List<String> getShoppingListIds() {
-        return shoppingListIds;
-    }
 
 
     public void setUserId(String userId) {
@@ -81,9 +77,6 @@ public class User {
         this.favoriteRecipeIds = favoriteRecipeIds;
     }
 
-    public void setShoppingListIds(List<String> shoppingListIds) {
-        this.shoppingListIds = shoppingListIds;
-    }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
@@ -96,7 +89,6 @@ public class User {
         map.put("email", email);
         map.put("profileImage", profileImageUrl);
         map.put("favoritePosts", favoriteRecipeIds);
-        map.put("shoppingListIds", shoppingListIds);
         map.put("createdAt" , FieldValue.serverTimestamp());
         map.put("updateAt" , FieldValue.serverTimestamp());
         return map;

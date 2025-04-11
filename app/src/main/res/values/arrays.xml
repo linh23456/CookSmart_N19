@@ -1,0 +1,20 @@
+<resources>
+    <string-array name="cooking_time_options">
+        <item>Mặc định</item>
+        <item>Thời gian tăng dần</item>
+        <item>Thời gian giảm dần</item>
+    </string-array>
+
+    <string-array name="difficulty_options">
+        <item>Tất cả</item>
+        <item>Dễ</item>
+        <item>Trung bình</item>
+        <item>Khó</item>
+    </string-array>
+
+    <string-array name="cost_options">
+        <item>Mặc định</item>
+        <item>Giá tăng dần</item>
+        <item>Giá giảm dần</item>
+    </string-array>
+</resources>

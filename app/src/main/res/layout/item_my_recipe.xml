@@ -5,37 +5,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="16dp"
+        android:background="?android:attr/selectableItemBackground">
 
         <!-- Recipe Image -->
         <ImageView
             android:id="@+id/imageViewRecipe"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="180dp"
             android:scaleType="centerCrop"
             android:src="@drawable/rice"
+            android:background="@drawable/rounded_image_background"
+            android:clipToOutline="true"
+            android:contentDescription="Recipe Image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="Recipe Image" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Recipe Name -->
         <TextView
             android:id="@+id/textViewRecipeName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="Tên công thức mẫu"
             app:layout_constraintTop_toBottomOf="@id/imageViewRecipe"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,22 +52,22 @@
             android:id="@+id/textViewRecipeDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:maxLines="2"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
-            android:textSize="14sp"
+            android:maxLines="2"
             android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
             tools:text="Mô tả ngắn gọn về công thức ở đây. Mô tả này có thể khá dài nhưng sẽ được cắt ngắn."
             app:layout_constraintTop_toBottomOf="@id/textViewRecipeName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Additional Info (e.g., Cooking Time and Difficulty) -->
+        <!-- Additional Info (Cooking Time and Difficulty) -->
         <LinearLayout
             android:id="@+id/layoutRecipeInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/textViewRecipeDescription"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,8 +80,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableStart="@android:drawable/ic_menu_recent_history"
-                android:drawablePadding="4dp"
-                android:textSize="12sp"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/orange_700"
+                android:textSize="13sp"
                 android:textColor="@android:color/darker_gray"
                 tools:text="30 phút"
                 android:gravity="start" />
@@ -87,8 +94,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableStart="@android:drawable/ic_menu_info_details"
-                android:drawablePadding="4dp"
-                android:textSize="12sp"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/orange_700"
+                android:textSize="13sp"
                 android:textColor="@android:color/darker_gray"
                 tools:text="Dễ"
                 android:gravity="start" />
@@ -99,28 +107,37 @@
             android:id="@+id/layoutStaffActions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal"
-            android:visibility="gone"
             tools:visibility="visible"
             app:layout_constraintTop_toBottomOf="@id/layoutRecipeInfo"
             app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonEditRecipe"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="Sửa"
-                android:textColor="@android:color/holo_blue_dark" />
+                android:textSize="12sp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                app:strokeColor="@color/orange_500"
+                app:cornerRadius="8dp"
+                android:textColor="@color/orange_500" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDeleteRecipe"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Xóa"
+                android:textSize="12sp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                app:strokeColor="@android:color/holo_red_dark"
+                app:cornerRadius="8dp"
                 android:textColor="@android:color/holo_red_dark" />
         </LinearLayout>
 

@@ -13,51 +13,64 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.fragments.HomeFragment;
 import com.example.cooksmart_n19.models.Recipe;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ItemRecipeAdapter extends RecyclerView.Adapter<ItemRecipeAdapter.ViewHolder> {
+public class ItemRecipeAdapter extends RecyclerView.Adapter<ItemRecipeAdapter.RecipeViewHolder> {
     private List<Recipe> recipes;
-    private OnLikeClickListener onLikeClickListener;
-    private OnViewDetailClickListener onViewDetailClickListener;
+    private final OnItemClickListener onLikeClickListener;
+    private final OnItemClickListener onDetailClickListener;
+    private final HomeFragment homeFragment;
 
-    public interface OnLikeClickListener {
-        void onLikeClick(Recipe recipe, int position);
+    public interface OnItemClickListener {
+        void onItemClick(Recipe recipe, int position);
     }
 
-    public interface OnViewDetailClickListener {
-        void onViewDetailClick(Recipe recipe);
-    }
-
-    public ItemRecipeAdapter(List<Recipe> recipes, OnLikeClickListener onLikeClickListener, OnViewDetailClickListener onViewDetailClickListener) {
-        this.recipes = recipes != null ? recipes : new ArrayList<>();
+    public ItemRecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener) {
+        this.recipes = recipes;
         this.onLikeClickListener = onLikeClickListener;
-        this.onViewDetailClickListener = onViewDetailClickListener;
+        this.onDetailClickListener = onDetailClickListener;
+        this.homeFragment = null;
+    }
+
+    public ItemRecipeAdapter(List<Recipe> recipes, OnItemClickListener onLikeClickListener, OnItemClickListener onDetailClickListener, HomeFragment homeFragment) {
+        this.recipes = recipes;
+        this.onLikeClickListener = onLikeClickListener;
+        this.onDetailClickListener = onDetailClickListener;
+        this.homeFragment = homeFragment;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recipe, parent, false);
-        return new ViewHolder(view);
+        return new RecipeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
-        holder.bind(recipe);
-        holder.buttonLike.setOnClickListener(v -> {
-            if (onLikeClickListener != null) {
-                onLikeClickListener.onLikeClick(recipe, position);
-            }
-        });
-        holder.buttonViewDetail.setOnClickListener(v -> {
-            if (onViewDetailClickListener != null) {
-                onViewDetailClickListener.onViewDetailClick(recipe);
-            }
-        });
+        holder.textViewTitle.setText(recipe.getTitle());
+        holder.textViewDifficulty.setText("Độ khó: " + recipe.getDifficulty());
+        holder.textViewCookingTime.setText("Thời gian: " + recipe.getCookingTime() + " phút");
+        holder.textViewCost.setText("Chi phí: " + recipe.getCost() + " VNĐ");
+
+        Glide.with(holder.itemView.getContext())
+                .load(recipe.getImage())
+                .placeholder(R.drawable.rice)
+                .error(R.drawable.rice)
+                .into(holder.imageViewRecipe);
+
+        // Cập nhật trạng thái nút "Thích"
+        if (homeFragment != null) {
+            boolean isLiked = homeFragment.isRecipeLiked(recipe.getRecipeId());
+            holder.buttonLike.setImageResource(isLiked ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+        }
+
+        holder.buttonLike.setOnClickListener(v -> onLikeClickListener.onItemClick(recipe, position));
+        holder.buttonDetail.setOnClickListener(v -> onDetailClickListener.onItemClick(recipe, position));
     }
 
     @Override
@@ -66,38 +79,28 @@ public class ItemRecipeAdapter extends RecyclerView.Adapter<ItemRecipeAdapter.Vi
     }
 
     public void updateRecipes(List<Recipe> newRecipes) {
-        this.recipes.clear();
-        if (newRecipes != null) {
-            this.recipes.addAll(newRecipes);
-        }
+        this.recipes = newRecipes;
         notifyDataSetChanged();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageViewRecipe;
+    static class RecipeViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
+        TextView textViewDifficulty;
         TextView textViewCookingTime;
+        TextView textViewCost;
         ImageButton buttonLike;
-        Button buttonViewDetail;
+        Button buttonDetail;
+        ImageView imageViewRecipe;
 
-        ViewHolder(@NonNull View itemView) {
+        public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageViewRecipe = itemView.findViewById(R.id.imageViewRecipe);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
+            textViewDifficulty = itemView.findViewById(R.id.textViewDifficulty);
             textViewCookingTime = itemView.findViewById(R.id.textViewCookingTime);
+            textViewCost = itemView.findViewById(R.id.textViewCost);
             buttonLike = itemView.findViewById(R.id.buttonLike);
-            buttonViewDetail = itemView.findViewById(R.id.buttonViewDetail);
-        }
-
-        void bind(Recipe recipe) {
-            textViewTitle.setText(recipe.getTitle());
-            textViewCookingTime.setText("Thời gian: " + recipe.getCookingTime());
-            Glide.with(itemView.getContext())
-                    .load(recipe.getImage())
-                    .placeholder(R.drawable.rice)
-                    .error(R.drawable.rice)
-                    .into(imageViewRecipe);
-            buttonLike.setImageResource(recipe.isLiked() ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+            buttonDetail = itemView.findViewById(R.id.buttonViewDetail);
+            imageViewRecipe = itemView.findViewById(R.id.imageViewRecipe);
         }
     }
 }

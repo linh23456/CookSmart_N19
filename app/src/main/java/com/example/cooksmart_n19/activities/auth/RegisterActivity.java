@@ -184,7 +184,6 @@ public class RegisterActivity extends AppCompatActivity {
         user.setName(username);
         user.setEmail(email);
         user.setFavoriteRecipeIds(new ArrayList<>());
-        user.setShoppingListIds(new ArrayList<>());
         user.setCreatedAt(Timestamp.now());
         user.setUpdatedAt(Timestamp.now());
 
