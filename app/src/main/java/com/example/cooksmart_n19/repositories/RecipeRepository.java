@@ -97,7 +97,6 @@ public class RecipeRepository {
                     callback.onSuccess(new ArrayList<>());
                 });
     }
-
     public void searchRecipesByKeyword(String query, String cookingTimeSort, String difficultyFilter, String costSort, RecipeCallback callback) {
         Query baseQuery = db.collection("recipes")
                 .whereGreaterThanOrEqualTo("title", query)
@@ -131,7 +130,6 @@ public class RecipeRepository {
                     } else if (costSort.equals("Giá giảm dần")) {
                         recipes.sort((r1, r2) -> Double.compare(r2.getCost(), r1.getCost()));
                     }
-
                     // Kiểm tra trạng thái "thích" nếu người dùng đã đăng nhập
                     String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
                     if (userId != null) {
@@ -145,7 +143,6 @@ public class RecipeRepository {
                     callback.onSuccess(new ArrayList<>());
                 });
     }
-
     private void checkUserLikes(String userId, List<Recipe> recipes, RecipeCallback callback) {
         db.collection("user_likes")
                 .whereEqualTo("userId", userId)

@@ -1,46 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingVertical="4dp"
-    android:gravity="center_vertical">
+    android:paddingVertical="8dp"
+    android:paddingHorizontal="16dp"
+    android:background="@android:color/white">
+
+    <!-- Viền dọc màu vàng bên trái -->
+    <View
+        android:id="@+id/vertical_line"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="@color/orange_500"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- Step Image -->
     <ImageView
         android:id="@+id/imageViewStep"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:scaleType="centerCrop"
         android:src="@drawable/rice"
         android:contentDescription="Step Image"
-        android:layout_marginEnd="8dp" />
+        android:clipToOutline="true"
+        android:outlineProvider="background"
+        android:background="@drawable/rounded_image_border"
+        app:layout_constraintStart_toEndOf="@id/vertical_line"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="12dp" />
 
-    <!-- Step Number and Description -->
-    <LinearLayout
+    <!-- Step Number (trong vòng tròn) -->
+    <TextView
+        android:id="@+id/textViewStepNumber"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:text="1"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:background="@drawable/circle_background"
+        app:layout_constraintStart_toEndOf="@id/imageViewStep"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <!-- Step Description -->
+    <TextView
+        android:id="@+id/textViewStepDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:text="Mô tả bước"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:lineSpacingExtra="4dp"
+        app:layout_constraintStart_toEndOf="@id/imageViewStep"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewStepNumber"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp" />
 
-        <TextView
-            android:id="@+id/textViewStepNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bước 1"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/textViewStepDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mô tả bước"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:maxLines="2"
-            android:ellipsize="end" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

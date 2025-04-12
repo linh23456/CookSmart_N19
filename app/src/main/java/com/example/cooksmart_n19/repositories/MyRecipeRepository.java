@@ -19,6 +19,7 @@ public class MyRecipeRepository {
     public void saveRecipe(Recipe recipe, SaveMyRecipeCallback callback){
         if(recipe.getRecipeId() == null || recipe.getRecipeId().isEmpty()){
             String recipeId = db.collection(COLLECTION_RECIPE).document().getId();
+            recipe.setRecipeId(recipeId);
             db.collection(COLLECTION_RECIPE)
                     .document(recipeId)
                     .set(recipe)

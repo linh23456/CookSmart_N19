@@ -59,6 +59,7 @@ public class ItemRecipeAdapter extends RecyclerView.Adapter<ItemRecipeAdapter.Re
 
         Glide.with(holder.itemView.getContext())
                 .load(recipe.getImage())
+
                 .thumbnail(0.25f)
                 .placeholder(R.drawable.rice)
                 .error(R.drawable.rice)

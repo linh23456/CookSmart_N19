@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ProfileFragment">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,62 +20,76 @@
             android:text="Hồ sơ cá nhân"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="16dp" />
 
         <!-- User Info Section -->
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:gravity="center_vertical">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
-            <!-- Profile Picture -->
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/ic_profile_placeholder"
-                app:tint="@android:color/darker_gray"
-                android:contentDescription="Profile Picture" />
-
-            <!-- User Name and Edit Button -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp"
-                android:gravity="center">
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
 
-                <!-- User Name -->
-                <TextView
-                    android:id="@+id/profile_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tên tài khoản"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                <!-- Profile Picture -->
+                <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_profile_placeholder"
+                    app:tint="@android:color/darker_gray"
+                    android:contentDescription="Profile Picture"
+                    android:background="@drawable/circle_background"
+                    android:clipToOutline="true" />
 
-                <!-- Edit Button -->
-                <Button
-                    android:id="@+id/edit_profile_button"
-                    android:layout_width="wrap_content"
+                <!-- User Name and Edit Button -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Chỉnh sửa"
-                    android:textSize="14sp"
-                    android:backgroundTint="#FF9800"
-                    android:textColor="@android:color/white" />
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <!-- User Name -->
+                    <TextView
+                        android:id="@+id/profile_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tên tài khoản"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+                    <!-- Edit Button -->
+                    <Button
+                        android:id="@+id/edit_profile_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Chỉnh sửa"
+                        android:textSize="14sp"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
+                        android:backgroundTint="#FF9800"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Tài khoản Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="Tài khoản"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -87,6 +102,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingVertical="12dp"
+            android:paddingHorizontal="8dp"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical">
 
             <ImageView
@@ -112,6 +129,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingVertical="12dp"
+            android:paddingHorizontal="8dp"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical">
 
             <ImageView
@@ -134,7 +153,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="Đề xuất"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -147,6 +167,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingVertical="12dp"
+            android:paddingHorizontal="8dp"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical">
 
             <ImageView
@@ -169,7 +191,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="Thông tin"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -182,6 +205,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingVertical="12dp"
+            android:paddingHorizontal="8dp"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical">
 
             <ImageView
@@ -200,13 +225,15 @@
                 android:textColor="@android:color/black" />
         </LinearLayout>
 
-        <!-- Đăng xuất-->
+        <!-- Đăng xuất -->
         <LinearLayout
             android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingVertical="12dp"
+            android:paddingHorizontal="8dp"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical">
 
             <ImageView
@@ -214,7 +241,7 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_logout"
                 app:tint="@android:color/black"
-                android:contentDescription="App Info Icon" />
+                android:contentDescription="Logout Icon" />
 
             <TextView
                 android:layout_width="wrap_content"

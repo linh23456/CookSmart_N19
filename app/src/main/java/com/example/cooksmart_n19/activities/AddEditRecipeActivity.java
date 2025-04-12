@@ -37,6 +37,7 @@ import com.example.cooksmart_n19.utils.CloudinaryManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -48,6 +49,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
     private TextInputEditText editTextRecipeName;
     private TextInputEditText editTextCost;
     private TextInputEditText editTextCookingTime;
+    private TextInputEditText editTextRecipeIntro;
     private ImageView imageViewRecipe;
     private AutoCompleteTextView editTextDifficulty;
     private Button buttonAddIngredient, buttonUploadImage, buttonAddStep;
@@ -104,6 +106,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
                     cookingStepList.addAll(recipe.getSteps());
                 }
                 // Cập nhật các trường
+                editTextRecipeIntro.setText(recipe.getDescription());
                 editTextRecipeName.setText(recipe.getTitle());
                 editTextCost.setText(String.valueOf(recipe.getCost()));
                 editTextCookingTime.setText(String.valueOf(recipe.getCookingTime()));
@@ -131,6 +134,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
     private void init() {
         editTextRecipeName = findViewById(R.id.editTextRecipeName);
         editTextCost = findViewById(R.id.editTextCost);
+        editTextRecipeIntro = findViewById(R.id.editTextRecipeIntro);
         editTextCookingTime = findViewById(R.id.editTextCookingTime);
         editTextDifficulty = findViewById(R.id.editTextDifficulty);
         imageViewRecipe = findViewById(R.id.imageViewRecipe);
@@ -199,16 +203,17 @@ public class AddEditRecipeActivity extends AppCompatActivity {
     }
 
     private void saveRecipe() {
-//        FirebaseUser user = mAuth.getCurrentUser();
-//        if (user == null) {
-//            Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String authorId = user.getUid();
         String name = editTextRecipeName.getText().toString().trim();
         String costStr = editTextCost.getText().toString().trim();
         String time = editTextCookingTime.getText().toString().trim();
         String difficulty = editTextDifficulty.getText().toString().trim();
+        String description = editTextRecipeIntro.getText().toString().trim();
 
         if (name.isEmpty() || costStr.isEmpty() || time.isEmpty() || difficulty.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
@@ -229,8 +234,10 @@ public class AddEditRecipeActivity extends AppCompatActivity {
         }
 
         // Gán thông tin cho recipe
+        recipe.setAuthorId(authorId);
         recipe.setTitle(name);
         recipe.setCost(cost);
+        recipe.setDescription(description);
         recipe.setCookingTime(Integer.parseInt(time));
         recipe.setDifficulty(difficulty);
         recipe.setIngredients(new ArrayList<>(ingredientItemList));

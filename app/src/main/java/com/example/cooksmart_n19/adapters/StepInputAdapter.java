@@ -67,7 +67,7 @@ public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.Step
         }
 
         public void bind(Recipe.CookingStep step, int position) {
-            textViewStepNumber.setText("Bước " + (position + 1));
+            textViewStepNumber.setText(String.valueOf(position + 1));
             textViewStepDescription.setText(step.getInstruction());
             Log.d("StepImage", "Image URL: " + step.getImages());
 
