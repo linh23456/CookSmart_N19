@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.fragments.ExploreFragment;
 import com.example.cooksmart_n19.fragments.HomeFragment;
@@ -22,7 +23,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private List<Recipe> recipes;
     private final OnItemClickListener onLikeClickListener;
     private final OnItemClickListener onDetailClickListener;
-    private final Object fragment; // Có thể là HomeFragment hoặc ExploreFragment
+    private final Object fragment;
 
     public interface OnItemClickListener {
         void onItemClick(Recipe recipe, int position);
@@ -57,6 +58,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.textViewCookingTime.setText("Thời gian: " + recipe.getCookingTime() + " phút");
         holder.textViewCost.setText("Chi phí: " + recipe.getCost() + " VNĐ");
 
+        Glide.with(holder.itemView.getContext())
+                .load(recipe.getImage())
+                .placeholder(R.drawable.rice)
+                .error(R.drawable.rice)
+                .into(holder.imageViewRecipe);
+
         if (fragment != null) {
             boolean isLiked = false;
             if (fragment instanceof HomeFragment) {
@@ -88,6 +95,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         TextView textViewCost;
         ImageView buttonLike;
         Button buttonDetail;
+        ImageView imageViewRecipe;
 
         public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,6 +105,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             textViewCost = itemView.findViewById(R.id.textViewCost);
             buttonLike = itemView.findViewById(R.id.imageViewLike);
             buttonDetail = itemView.findViewById(R.id.buttonViewRecipe);
+            imageViewRecipe = itemView.findViewById(R.id.imageViewRecipe);
         }
     }
 }

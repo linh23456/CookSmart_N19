@@ -162,7 +162,16 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void navigateToRecipeDetail(Recipe recipe, int position) {
+    private void navigateToRecipeDetail(Recipe recipe, int postion) {
+        // Kiểm tra recipeId trước khi điều hướng
+        if (recipe.getRecipeId() == null || recipe.getRecipeId().isEmpty()) {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID công thức", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        Log.d("My App", "Navigating to recipe detail with ID: " + recipe.getRecipeId());
         Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
         intent.putExtra("recipe_id", recipe.getRecipeId());
         startActivity(intent);

@@ -23,8 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.activities.RecipeDetailActivity;
-import com.example.cooksmart_n19.adapters.ItemRecipeAdapter;
-import com.example.cooksmart_n19.adapters.RecipeAdapter;
 import com.example.cooksmart_n19.models.Recipe;
 import com.example.cooksmart_n19.repositories.RecipeRepository;
 import com.google.firebase.auth.FirebaseAuth;
@@ -256,29 +254,19 @@ public class ExploreFragment extends Fragment {
         });
     }
 
-    private void navigateToRecipeDetail(Recipe recipe, int position) {
-        if (mAuth.getCurrentUser() == null) {
+    private void navigateToRecipeDetail(Recipe recipe, int postion) {
+        // Kiểm tra recipeId trước khi điều hướng
+        if (recipe.getRecipeId() == null || recipe.getRecipeId().isEmpty()) {
             if (getContext() != null) {
-                Toast.makeText(getContext(), "Vui lòng đăng nhập để xem chi tiết công thức", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID công thức", Toast.LENGTH_SHORT).show();
             }
             return;
         }
 
-        recipeRepository.getRecipeDetails(recipe.getRecipeId(), new RecipeRepository.OnRecipeDetailsListener() {
-            @Override
-            public void onSuccess(Recipe fullRecipe) {
-                Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
-                intent.putExtra("recipe", fullRecipe.toString());
-                startActivity(intent);
-            }
-
-            @Override
-            public void onFailure(String error) {
-                if (getContext() != null) {
-                    Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Log.d("My App", "Navigating to recipe detail with ID: " + recipe.getRecipeId());
+        Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
+        intent.putExtra("recipe_id", recipe.getRecipeId());
+        startActivity(intent);
     }
 
     public boolean isRecipeLiked(String recipeId) {
