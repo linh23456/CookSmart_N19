@@ -4,4 +4,42 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="image_login">Image login</string>
     <string name="title_activity_main">MainActivity</string>
+    <string-array name="diet_options">
+        <item>Bình thường</item>
+        <item>Chay</item>
+        <item>Keto</item>
+        <item>Low-carb</item>
+        <item>Không đường</item>
+    </string-array>
+    <string name="gemini_api_key">AIzaSyCCWouY-wIgDDJethIn-PFOe_CYvkch5ng</string>
+    <string name="error_network">Lỗi kết nối mạng. Vui lòng kiểm tra lại Internet!</string>
+    <string name="error_format">Dữ liệu nhận được không đúng định dạng. Vui lòng thử lại!</string>
+    <string name="error_generic">Lỗi hệ thống. Xin lỗi vì sự bất tiện này!</string>
+    <string name="default_web_client_id">470839543894-ndv9otfojukqaurhl2e4lrejjscjm5v9.apps.googleusercontent.com</string>
+    >
+    <string name="logo_desc">Ứng dụng nấu ăn thông minh</string>
+    <string name="tagline">Khám phá, Nấu nướng , Chia sẻ</string>
+    <string name="username_hint">Tên người dùng</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="login_button">Đăng nhập</string>
+    <string name="toggle_register">Chưa có tài khoản? Đăng ký</string>
+    <string name="social_login_title">Hoặc đăng nhập bằng</string>
+    <string name="fb_login_desc">Đăng nhập bằng Facebook</string>
+    <string name="google_login_desc">Đăng nhập bằng Google</string>
+    <string name="phone_login_desc">Đăng nhập bằng số điện thoại</string>
+    <string name="login">Đăng nhập</string>
+    <string name="register">Đăng ký</string>
+    <string name="no_account">Chưa có tài khoản? Đăng ký</string>
+    <string name="have_account">Đã có tài khoản? Đăng nhập</string>
+    <string name="username_required">Vui lòng nhập tên người dùng</string>
+    <string name="valid_email_required">Vui lòng nhập email hợp lệ</string>
+    <string name="email_required">Email là bắt buộc </string>
+    <string name="password_required">Vui lòng nhập mật khẩu</string>
+    <string name="password_length_error">Mật khẩu cần ít nhất 6 ký tự</string>
+    <string name="reset_email_sent">Hướng dẫn đặt lại mật khẩu đã được gửi qua email</string>
+    <string name="facebook_cancel">Đăng nhập bằng Facebook đã bị hủy</string>
+    <string name="facebook_app_id">YOUR_FACEBOOK_APP_ID</string>
+    <string name="fb_login_protocol_scheme">fbYOUR_FACEBOOK_APP_ID</string>
 </resources>

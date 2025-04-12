@@ -24,6 +24,14 @@ public class User {
     public User() {
     }
 
+    public User(String userId, String name, String email, List<String> favoriteRecipeIds, Timestamp createdAt, Timestamp updatedAt) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.favoriteRecipeIds = favoriteRecipeIds != null ? favoriteRecipeIds : new ArrayList<>();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
     public User(String name, String email) {
     }
 
@@ -83,20 +91,31 @@ public class User {
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
 
-    public Map<String , Object> toFirestoreMap(){
-        Map<String , Object> map = new HashMap<>();
+    public Map<String, Object> toFirestoreMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
         map.put("name", name);
         map.put("email", email);
-        map.put("profileImage", profileImageUrl);
-        map.put("favoritePosts", favoriteRecipeIds);
-        map.put("createdAt" , FieldValue.serverTimestamp());
-        map.put("updateAt" , FieldValue.serverTimestamp());
+        map.put("phoneNumber", phoneNumber);
+        map.put("profileImageUrl", profileImageUrl);
+        map.put("favoriteRecipeIds", favoriteRecipeIds);
+        map.put("createdAt", FieldValue.serverTimestamp());
+        map.put("updatedAt", FieldValue.serverTimestamp());
         return map;
     }
 
-    public User fromFirestore(DocumentSnapshot doc) {
-        User user = doc.toObject(User.class);
-        if (user != null) user.setUserId(doc.getId());
-        return user;
+    // Sửa phương thức fromFirestore
+    public static User fromFirestore(DocumentSnapshot doc) {
+        if (doc.exists() && doc.getData() != null) {
+            return new User(
+                    doc.getId(),
+                    doc.getString("name"),
+                    doc.getString("email"),
+                    (List<String>) doc.get("favoriteRecipeIds"),
+                    doc.getTimestamp("createdAt"),
+                    doc.getTimestamp("updatedAt")
+            );
+        }
+        return null;
     }
 }

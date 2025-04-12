@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Tên món ăn -->
+        <TextView
+            android:id="@+id/tvDishName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp"/>
+
+        <!-- Nguyên liệu -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nguyên Liệu"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <ListView
+            android:id="@+id/lvIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp"/>
+
+        <!-- Các bước -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Các Bước"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingTop="16dp"/>
+
+        <ListView
+            android:id="@+id/lvSteps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp"/>
+
+        <!-- Nút Bắt đầu làm -->
+        <Button
+            android:id="@+id/btnStartCooking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bắt đầu làm"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/teal_700"/>
+
+    </LinearLayout>
+</ScrollView>

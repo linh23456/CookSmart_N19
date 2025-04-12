@@ -7,7 +7,6 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @IgnoreExtraProperties
 public class Recipe {
     private String recipeId;
