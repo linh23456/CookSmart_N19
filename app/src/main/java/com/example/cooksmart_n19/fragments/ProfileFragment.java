@@ -15,9 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.activities.EditProfileActivity;
 import com.example.cooksmart_n19.activities.MyRecipeActivity;
 import com.example.cooksmart_n19.activities.auth.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
 
@@ -55,6 +57,16 @@ public class ProfileFragment extends Fragment {
         if (mAuth.getCurrentUser() != null) {
             String displayName = mAuth.getCurrentUser().getDisplayName();
             profileName.setText(displayName != null ? displayName : "Tên tài khoản");
+            editProfileButton.setOnClickListener(v -> {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user == null) {
+                    Toast.makeText(getContext(), "Bạn chưa đăng nhập", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Chỉ khởi chạy EditProfileActivity, không cần đính kèm data
+                Intent intent = new Intent(getActivity(), EditProfileActivity.class);
+                startActivity(intent);
+            });
         } else {
             profileName.setText("Chưa đăng nhập");
             editProfileButton.setText("Đăng nhập");
