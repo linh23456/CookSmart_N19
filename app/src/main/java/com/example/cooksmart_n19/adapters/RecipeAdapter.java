@@ -23,7 +23,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private List<Recipe> recipes;
     private final OnItemClickListener onLikeClickListener;
     private final OnItemClickListener onDetailClickListener;
-    private final Object fragment; // Có thể là HomeFragment hoặc ExploreFragment
+    private final Object fragment;
 
     public interface OnItemClickListener {
         void onItemClick(Recipe recipe, int position);

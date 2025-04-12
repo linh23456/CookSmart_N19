@@ -50,7 +50,7 @@ public class FavoriteFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         recipeRepository = new RecipeRepository();
-        favouriteRecipeRepository = new FavoriteRecipeRepository(); // Khởi tạo favouriteRecipeRepository
+        favouriteRecipeRepository = new FavoriteRecipeRepository();
         favoriteRecipes = new ArrayList<>();
         likeStatusMap = new HashMap<>();
 
@@ -139,28 +139,20 @@ public class FavoriteFragment extends Fragment {
             return;
         }
 
-        recipeRepository.getRecipeDetails(recipe.getRecipeId(), new RecipeRepository.OnRecipeDetailsListener() {
-            @Override
-            public void onSuccess(Recipe fullRecipe) {
-                Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
-                intent.putExtra("recipe", fullRecipe.toString()); // Truyền trực tiếp đối tượng Recipe
-                startActivity(intent);
-            }
-
-            @Override
-            public void onFailure(String error) {
-                if (isAdded() && getContext() != null) {
-                    if (error.contains("PERMISSION_DENIED")) {
-                        Toast.makeText(getContext(), "Không có quyền xem chi tiết công thức", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
+        // Truyền recipeId thay vì toàn bộ Recipe
+        Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
+        intent.putExtra("recipe_id", recipe.getRecipeId());
+        startActivity(intent);
     }
 
     public boolean isRecipeLiked(String recipeId) {
         return likeStatusMap.getOrDefault(recipeId, false);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Hủy listener nếu có
+        recipeRepository.removeListener();
     }
 }
