@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.models.CookingStep;
 import com.example.cooksmart_n19.models.Recipe;
-
 import java.util.List;
 
 public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.StepInputViewHolder> {

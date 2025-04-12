@@ -17,6 +17,21 @@
         android:theme="@style/Theme.CookSmart_N19"
         tools:replace="android:fullBackupContent"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.RecipeAIListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.RecipeAIStepsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CookingAIActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.CookingAIStepsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.RecipeAIOverviewActivity"
+            android:exported="false" />
         <activity android:name=".activities.EditProfileActivity"
             android:exported="false"/>
         <activity

@@ -1,66 +1,145 @@
 package com.example.cooksmart_n19.fragments;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.ai.RecipeGenerator;
+import com.example.cooksmart_n19.activities.RecipeAIOverviewActivity;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AssistantFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AssistantFragment extends Fragment {
+    private EditText edtIngredients;
+    private Spinner spDiet;
+    private RecipeGenerator generator;
+    private ProgressDialog progressDialog;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AssistantFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AssistantFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AssistantFragment newInstance(String param1, String param2) {
-        AssistantFragment fragment = new AssistantFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_assistant, container, false);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupViews(view);
+        initRecipeGenerator();
+    }
+
+    private void setupViews(View rootView) {
+        edtIngredients = rootView.findViewById(R.id.edt_ingredients);
+        spDiet = rootView.findViewById(R.id.sp_diet);
+        Button btnGenerate = rootView.findViewById(R.id.btn_generate);
+
+        btnGenerate.setOnClickListener(v -> handleGenerateRecipe());
+    }
+
+    private void initRecipeGenerator() {
+        String apiKey = getString(R.string.gemini_api_key);
+        generator = new RecipeGenerator(requireContext(), apiKey);
+    }
+
+    private void handleGenerateRecipe() {
+        String ingredients = edtIngredients.getText().toString().trim();
+        if (ingredients.isEmpty()) {
+            showToast("Vui lòng nhập nguyên liệu!");
+            return;
+        }
+
+        showLoadingDialog();
+        List<String> ingredientList = Arrays.asList(ingredients.split(",\\s*"));
+
+        generator.generateRecipe(ingredientList, new RecipeGenerator.RecipeCallback() {
+            @Override
+            public void onSuccess(Map<String, Object> recipeData) {
+                requireActivity().runOnUiThread(() -> {
+                    dismissLoadingDialog();
+                    processRecipeData(recipeData);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                requireActivity().runOnUiThread(() -> {
+                    dismissLoadingDialog();
+                    handleError("Lỗi: " + error);
+                });
+            }
+        });
+    }
+
+    private void processRecipeData(Map<String, Object> recipeData) {
+        if (isValidRecipe(recipeData)) {
+            navigateToRecipeOverview(recipeData);
+        } else {
+            handleError("Dữ liệu không hợp lệ");
         }
     }
 
+    private boolean isValidRecipe(Map<String, Object> data) {
+        return data.containsKey("title") &&
+                data.containsKey("ingredients") &&
+                data.containsKey("steps");
+    }
+
+    private void navigateToRecipeOverview(Map<String, Object> data) {
+        Intent intent = new Intent(requireContext(), RecipeAIOverviewActivity.class);
+        intent.putExtra("title", (String) data.get("title"));
+        intent.putStringArrayListExtra("ingredients", new ArrayList<>((List<String>) data.get("ingredients")));
+        intent.putStringArrayListExtra("steps", new ArrayList<>((List<String>) data.get("steps")));
+
+        if (data.containsKey("image")) {
+            intent.putExtra("image", (String) data.get("image"));
+        }
+
+        startActivity(intent);
+    }
+
+    private void showLoadingDialog() {
+        progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Đang tạo công thức...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    private void dismissLoadingDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    private void handleError(String message) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Lỗi")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_assistant, container, false);
+    public void onDestroyView() {
+        dismissLoadingDialog();
+        super.onDestroyView();
     }
 }
