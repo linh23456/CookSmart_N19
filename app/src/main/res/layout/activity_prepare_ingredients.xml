@@ -16,6 +16,14 @@
         android:textColor="@android:color/black"
         android:layout_marginBottom="16dp" />
 
+    <!-- ProgressBar để hiển thị trạng thái tải -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
     <!-- RecyclerView để hiển thị danh sách nguyên liệu với checkbox -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPrepareIngredients"

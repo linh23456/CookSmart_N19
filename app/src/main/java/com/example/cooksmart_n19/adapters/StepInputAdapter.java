@@ -12,15 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.models.CookingStep;
 import com.example.cooksmart_n19.models.Recipe;
 
 import java.util.List;
 
 public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.StepInputViewHolder> {
-    private List<Recipe.CookingStep> cookingStepList;
+    private List<CookingStep> cookingStepList;
     private OnStepClickListener stepClickListener;
 
-    public StepInputAdapter(List<Recipe.CookingStep> steps, OnStepClickListener stepClickListener) {
+    public StepInputAdapter(List<CookingStep> steps, OnStepClickListener stepClickListener) {
         this.cookingStepList = steps;
         this.stepClickListener = stepClickListener;
     }
@@ -34,7 +35,7 @@ public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.Step
 
     @Override
     public void onBindViewHolder(@NonNull StepInputViewHolder holder, int position) {
-        Recipe.CookingStep cookingStep = cookingStepList.get(position);
+        CookingStep cookingStep = cookingStepList.get(position);
         holder.bind(cookingStep, position);
     }
 
@@ -43,7 +44,7 @@ public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.Step
         return cookingStepList.size();
     }
 
-    public void updateSteps(List<Recipe.CookingStep> newStepList) {
+    public void updateSteps(List<CookingStep> newStepList) {
         this.cookingStepList = newStepList;
         notifyDataSetChanged();
     }
@@ -66,7 +67,7 @@ public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.Step
             });
         }
 
-        public void bind(Recipe.CookingStep step, int position) {
+        public void bind(CookingStep step, int position) {
             textViewStepNumber.setText(String.valueOf(position + 1));
             textViewStepDescription.setText(step.getInstruction());
             Log.d("StepImage", "Image URL: " + step.getImages());
