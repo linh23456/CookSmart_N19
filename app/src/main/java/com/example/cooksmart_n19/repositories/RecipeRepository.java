@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.cooksmart_n19.models.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
@@ -51,6 +51,7 @@ public class RecipeRepository {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Recipe recipe = document.toObject(Recipe.class);
                         recipe.setRecipeId(document.getId());
+                        // Không lấy ingredients và steps từ subcollection ở đây
                         recipes.add(recipe);
                     }
                     Log.d(TAG, "Loaded featured recipes: " + recipes.size() + " items");
@@ -80,6 +81,7 @@ public class RecipeRepository {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Recipe recipe = document.toObject(Recipe.class);
                         recipe.setRecipeId(document.getId());
+                        // Không lấy ingredients và steps từ subcollection ở đây
                         recipes.add(recipe);
                     }
                     Log.d(TAG, "Loaded recent recipes: " + recipes.size() + " items");
@@ -175,7 +177,7 @@ public class RecipeRepository {
         }
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d(TAG, "Toggling like for user: " + userId + ", recipe: " + recipeId);
+        System.out.println("Toggling like for user: " + userId + ", recipe: " + recipeId);
         db.collection("user_likes")
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("recipeId", recipeId)
@@ -188,11 +190,11 @@ public class RecipeRepository {
                                     .document(document.getId())
                                     .delete()
                                     .addOnSuccessListener(aVoid -> {
-                                        Log.d(TAG, "Successfully unliked recipe: " + recipeId);
+                                        System.out.println("Successfully unliked recipe: " + recipeId);
                                         listener.onSuccess(false);
                                     })
                                     .addOnFailureListener(e -> {
-                                        Log.e(TAG, "Failed to unlike recipe: " + e.getMessage());
+                                        System.out.println("Failed to unlike recipe: " + e.getMessage());
                                         listener.onFailure(e.getMessage());
                                     });
                         }
@@ -206,18 +208,43 @@ public class RecipeRepository {
                         db.collection("user_likes")
                                 .add(likeData)
                                 .addOnSuccessListener(documentReference -> {
-                                    Log.d(TAG, "Successfully liked recipe: " + recipeId);
+                                    System.out.println("Successfully liked recipe: " + recipeId);
                                     listener.onSuccess(true);
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Failed to like recipe: " + e.getMessage());
+                                    System.out.println("Failed to like recipe: " + e.getMessage());
                                     listener.onFailure(e.getMessage());
                                 });
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to query user_likes: " + e.getMessage());
+                    System.out.println("Failed to query user_likes: " + e.getMessage());
                     listener.onFailure(e.getMessage());
+                });
+    }
+
+    public void getRecipeDetails(String recipeId, OnRecipeDetailsListener listener) {
+
+    }
+
+    private void fetchRecipeDetails(Recipe recipe, OnRecipeDetailsListener listener) {
+
+    }
+
+    private void checkUserLikeForRecipe(Recipe recipe, OnRecipeDetailsListener listener) {
+        String userId = mAuth.getCurrentUser().getUid();
+        db.collection("user_likes")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("recipeId", recipe.getRecipeId())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    recipe.setLiked(!queryDocumentSnapshots.isEmpty());
+                    listener.onSuccess(recipe);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error checking user like for recipe: " + e.getMessage());
+                    recipe.setLiked(false);
+                    listener.onSuccess(recipe);
                 });
     }
 
