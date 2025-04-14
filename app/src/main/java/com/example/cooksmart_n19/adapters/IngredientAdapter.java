@@ -9,14 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.models.IngredientItem;
 import com.example.cooksmart_n19.models.Recipe;
 
 import java.util.List;
 
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
-    private List<Recipe.IngredientItem> ingredientItemList;
+    private List<IngredientItem> ingredientItemList;
     private OnIngredientListener ingredientListener;
-    public IngredientAdapter(List<Recipe.IngredientItem> list, OnIngredientListener listener){
+    public IngredientAdapter(List<IngredientItem> list, OnIngredientListener listener){
         this.ingredientListener = listener;
         this.ingredientItemList = list;
     }
@@ -30,7 +31,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
 
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
-        Recipe.IngredientItem ingredient = ingredientItemList.get(position);
+        IngredientItem ingredient = ingredientItemList.get(position);
         holder.bind(ingredient);
     }
 
@@ -39,7 +40,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         return ingredientItemList.size();
     }
 
-    public void updateIngredients(List<Recipe.IngredientItem> newIngredientList) {
+    public void updateIngredients(List<IngredientItem> newIngredientList) {
         this.ingredientItemList = newIngredientList;
         notifyDataSetChanged();
     }
@@ -58,7 +59,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
                 }
             });
         }
-        public void bind(Recipe.IngredientItem ingredient) {
+        public void bind(IngredientItem ingredient) {
             textViewIngredientName.setText(ingredient.getIngredientName());
             textViewQuantity.setText(String.format("%s %s", ingredient.getQuantity(), ingredient.getUnit()));
         }

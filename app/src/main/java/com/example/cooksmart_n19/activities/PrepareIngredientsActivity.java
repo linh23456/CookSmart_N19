@@ -1,15 +1,11 @@
 package com.example.cooksmart_n19.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,8 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.adapters.PrepareIngredientAdapter;
-import com.example.cooksmart_n19.models.Recipe;
-import com.example.cooksmart_n19.repositories.RecipeDetailsRepository;
+import com.example.cooksmart_n19.models.IngredientItem;
+import com.example.cooksmart_n19.repositories.MyRecipeRepository;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +29,21 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewPrepareIngredients;
     private Button continueButton;
+    private ProgressBar progressBar;
     private PrepareIngredientAdapter adapter;
-    private RecipeDetailsRepository repository;
-    private List<Recipe.IngredientItem> ingredientItemList;
-    private Recipe recipe;
+    private MyRecipeRepository repository;
+    private List<IngredientItem> ingredientItemList;
+    private String recipeId;
     private static final String TAG = "PrepareIngredients";
     private boolean isActivityActive = true; // Kiểm tra trạng thái activity
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prepare_ingredients);
-        repository = new RecipeDetailsRepository();
+        repository = new MyRecipeRepository();
+        mAuth = FirebaseAuth.getInstance();
         ingredientItemList = new ArrayList<>();
         Log.d(TAG, "onCreate called");
 
@@ -66,6 +66,7 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
         // Ánh xạ các thành phần giao diện
         recyclerViewPrepareIngredients = findViewById(R.id.recyclerViewPrepareIngredients);
         continueButton = findViewById(R.id.continue_button);
+        progressBar = findViewById(R.id.progressBar); // Thêm ProgressBar vào layout
         Log.d(TAG, "Views initialized");
 
         // Khởi tạo RecyclerView và adapter
@@ -74,11 +75,16 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
         recyclerViewPrepareIngredients.setAdapter(adapter);
         Log.d(TAG, "RecyclerView and adapter initialized");
 
+        // Kiểm tra chiều cao của RecyclerView
+        recyclerViewPrepareIngredients.post(() -> {
+            Log.d(TAG, "RecyclerView height: " + recyclerViewPrepareIngredients.getHeight());
+        });
+
         // Xử lý sự kiện nút "Tiếp tục"
         continueButton.setOnClickListener(v -> startCooking());
 
         // Nhận recipeId từ Intent
-        String recipeId = getIntent().getStringExtra("recipe_id");
+        recipeId = getIntent().getStringExtra("recipe_id");
         if (recipeId == null) {
             Log.e(TAG, "recipeId is null");
             Toast.makeText(this, "Không tìm thấy ID công thức", Toast.LENGTH_SHORT).show();
@@ -86,7 +92,15 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
             return;
         }
 
-        // Tải chi tiết công thức
+        // Kiểm tra đăng nhập (nếu cần)
+        if (mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "User is not logged in");
+            Toast.makeText(this, "Vui lòng đăng nhập để xem chi tiết công thức", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        // Tải danh sách nguyên liệu
         Log.d(TAG, "Calling loadIngredients with recipeId: " + recipeId);
         loadIngredients(recipeId);
 
@@ -101,51 +115,57 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
     private void loadIngredients(String recipeId) {
         Log.d(TAG, "loadIngredients started for recipeId: " + recipeId);
 
-        repository.getRecipeDetails(recipeId, new RecipeDetailsRepository.OnRecipeDetailsListener() {
+        // Hiển thị ProgressBar
+        progressBar.setVisibility(View.VISIBLE);
+        continueButton.setEnabled(false); // Vô hiệu hóa nút "Tiếp tục" trong khi tải
+
+        repository.loadIngredients(recipeId, new MyRecipeRepository.OnIngredientsLoadedListener() {
             @Override
-            public void onSuccess(Recipe loadedRecipe) {
+            public void onIngredientsLoaded(List<IngredientItem> ingredients) {
                 // Kiểm tra xem activity còn hoạt động không trước khi xử lý
                 if (!isActivityActive) {
-                    Log.w(TAG, "Activity is no longer active, skipping onSuccess");
+                    Log.w(TAG, "Activity is no longer active, skipping onIngredientsLoaded");
                     return;
                 }
 
-                Log.d(TAG, "onSuccess called with recipe: " + (loadedRecipe != null ? loadedRecipe.toString() : "null"));
-                recipe = loadedRecipe;
-                displayRecipeDetails();
+                // Ẩn ProgressBar
+                progressBar.setVisibility(View.GONE);
+                continueButton.setEnabled(true);
+
+                Log.d(TAG, "Ingredients loaded successfully: " + ingredients.size() + " items");
+                if (ingredients == null || ingredients.isEmpty()) {
+                    Log.e(TAG, "No ingredients found for this recipe");
+                    Toast.makeText(PrepareIngredientsActivity.this, "Không có nguyên liệu cho công thức này", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                ingredientItemList.clear();
+                ingredientItemList.addAll(ingredients);
+                Log.d(TAG, "Updated ingredientItemList: " + ingredientItemList.toString());
+                adapter.updateIngredients(ingredientItemList);
+                Log.d(TAG, "Adapter item count after update: " + adapter.getItemCount());
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(Exception e) {
                 // Kiểm tra xem activity còn hoạt động không trước khi xử lý
                 if (!isActivityActive) {
                     Log.w(TAG, "Activity is no longer active, skipping onError");
                     return;
                 }
 
-                Log.e(TAG, "Error loading recipe: " + error);
-                Toast.makeText(PrepareIngredientsActivity.this, "Công thức không tồn tại hoặc đã bị xóa. Vui lòng quay lại và thử công thức khác.", Toast.LENGTH_LONG).show();
+                // Ẩn ProgressBar
+                progressBar.setVisibility(View.GONE);
+                continueButton.setEnabled(true);
+
+                Log.e(TAG, "Error loading ingredients: " + e.getMessage());
+                Toast.makeText(PrepareIngredientsActivity.this, "Không thể tải nguyên liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 finish();
             }
         });
 
         Log.d(TAG, "loadIngredients called, waiting for Firestore response...");
-    }
-
-    /**
-     * Hiển thị danh sách nguyên liệu trong RecyclerView.
-     */
-    private void displayRecipeDetails() {
-        if (recipe == null || recipe.getIngredients() == null || recipe.getIngredients().isEmpty()) {
-            Log.d(TAG, "No ingredients found for this recipe");
-            Toast.makeText(this, "Không có nguyên liệu cho công thức này", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        // Cập nhật adapter với danh sách nguyên liệu mới
-        Log.d(TAG, "Ingredients loaded: " + recipe.getIngredients().size() + " items");
-        adapter.updateIngredients(recipe.getIngredients());
     }
 
     /**
@@ -161,7 +181,7 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
 
         if (adapter.areAllIngredientsChecked()) {
             Intent intent = new Intent(this, CookingStepsActivity.class);
-            intent.putExtra("recipe_id", recipe.getRecipeId());
+            intent.putExtra("recipe_id", recipeId);
             startActivity(intent);
             finish();
         } else {

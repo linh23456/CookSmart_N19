@@ -33,12 +33,14 @@ public class MyRecipeActivity extends AppCompatActivity {
     private List<Recipe> recipeList;
     private MyRecipeRepository repository;
     private String currentUserId;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_my_recipe);
+        mAuth = FirebaseAuth.getInstance();
 
         // Find the root view
         View rootView = findViewById(R.id.mainMyRecipe);
@@ -119,7 +121,7 @@ public class MyRecipeActivity extends AppCompatActivity {
     }
 
     private void loadRecipes() {
-        repository.getAllMyRecipe(new MyRecipeRepository.GetMRecipeCallback() {
+        repository.getAllMyRecipe(mAuth.getCurrentUser().getUid(),new MyRecipeRepository.GetMRecipeCallback() {
             @Override
             public void onSuccess(List<Recipe> recipe) {
                 recipeList.clear();

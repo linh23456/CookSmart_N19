@@ -17,11 +17,10 @@ import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.activities.auth.LoginActivity;
 import com.example.cooksmart_n19.adapters.IngredientAdapter;
+import com.example.cooksmart_n19.models.IngredientItem;
 import com.example.cooksmart_n19.models.Recipe;
-import com.example.cooksmart_n19.models.User;
-import com.example.cooksmart_n19.repositories.RecipeDetailsRepository;
+import com.example.cooksmart_n19.repositories.MyRecipeRepository;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +40,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private IngredientAdapter ingredientAdapter;
     private RecyclerView recyclerView;
     private Recipe recipe;
-    private List<Recipe.IngredientItem> ingredientItemList;
+    private List<IngredientItem> ingredientItemList;
     private boolean isLiked = false; // Trạng thái "thích" (giả định)
-    private RecipeDetailsRepository recipeDetailsRepository;
+    private MyRecipeRepository repository;
     private FirebaseAuth mAuth;
     private static final String TAG = "RecipeDetailActivity";
 
@@ -54,7 +53,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Khởi tạo repository
-        recipeDetailsRepository = new RecipeDetailsRepository();
+        repository = new MyRecipeRepository();
 
         ingredientItemList = new ArrayList<>();
         Log.d(TAG, "onCreate called");
@@ -98,18 +97,39 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     private void loadRecipeDetails(String recipeId) {
         Log.d(TAG, "Loading recipe details for recipeId: " + recipeId);
-        recipeDetailsRepository.getRecipeDetails(recipeId, new RecipeDetailsRepository.OnRecipeDetailsListener() {
+
+        // Tải thông tin cơ bản của công thức
+        repository.getRecipeById(recipeId, new MyRecipeRepository.GetSingleRecipeCallback() {
             @Override
             public void onSuccess(Recipe loadedRecipe) {
                 Log.d(TAG, "Recipe loaded successfully: " + (loadedRecipe != null ? loadedRecipe.toString() : "null"));
                 recipe = loadedRecipe;
                 displayRecipeDetails();
+
+                // Tải danh sách nguyên liệu từ subcollection
+                repository.loadIngredients(recipeId, new MyRecipeRepository.OnIngredientsLoadedListener() {
+                    @Override
+                    public void onIngredientsLoaded(List<IngredientItem> ingredients) {
+                        Log.d(TAG, "Ingredients loaded successfully: " + ingredients.size() + " items");
+                        ingredientItemList.clear();
+                        ingredientItemList.addAll(ingredients);
+                        ingredientAdapter = new IngredientAdapter(ingredientItemList, position -> {});
+                        recyclerView.setLayoutManager(new LinearLayoutManager(RecipeDetailActivity.this));
+                        recyclerView.setAdapter(ingredientAdapter);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e(TAG, "Error loading ingredients: " + e.getMessage());
+                        Toast.makeText(RecipeDetailActivity.this, "Không thể tải nguyên liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onError(String error) {
-                Log.e(TAG, "Error loading recipe: " + error);
-                Toast.makeText(RecipeDetailActivity.this, error, Toast.LENGTH_SHORT).show();
+            public void onFailure(String errorMessage) {
+                Log.e(TAG, "Error loading recipe: " + errorMessage);
+                Toast.makeText(RecipeDetailActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -129,7 +149,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         recipeDifficulty.setText("Độ khó: " + recipe.getDifficulty());
         recipeCookingTime.setText("Thời gian: " + recipe.getCookingTime() + " phút");
         recipeCost.setText("Chi phí: " + recipe.getCost() + " VNĐ");
-        recipeRating.setText("5.0 (17 đánh giá)"); // Giả định đánh giá
+        recipeRating.setText(String.format("%.1f (%d đánh giá)", recipe.getAverageRating(), recipe.getRatingCount())); // Giả định đánh giá
 
         // Hiển thị mô tả
         recipeDescription.setText(recipe.getDescription() != null ? recipe.getDescription() : "Không có mô tả.");
@@ -140,18 +160,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 .placeholder(R.drawable.recipe_placeholder)
                 .error(R.drawable.recipe_placeholder)
                 .into(recipeImage);
-
-        // Hiển thị danh sách nguyên liệu
-        ingredientItemList.clear();
-        if (recipe.getIngredients() != null) {
-            ingredientItemList.addAll(recipe.getIngredients());
-            Log.d(TAG, "Ingredients loaded: " + ingredientItemList.size() + " items");
-        } else {
-            Log.w(TAG, "No ingredients found for this recipe");
-        }
-        ingredientAdapter = new IngredientAdapter(ingredientItemList, position -> {});
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(ingredientAdapter);
     }
 
     private void toggleLike() {
@@ -170,14 +178,22 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void startCooking() {
-        if(mAuth.getCurrentUser() != null){
+        if (mAuth.getCurrentUser() != null) {
             Intent intent = new Intent(this, PrepareIngredientsActivity.class);
             intent.putExtra("recipe_id", recipe.getRecipeId());
             startActivity(intent);
-        }else{
+            recipeRating.setText(String.format("%.1f (%d đánh giá)", recipe.getAverageRating(), recipe.getRatingCount()));
+        } else {
             Toast.makeText(this, "Vui lòng đăng nhập trước khi bắt đầu nấu ăn", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            displayRecipeDetails();
         }
     }
 }

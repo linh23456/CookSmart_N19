@@ -1,8 +1,14 @@
 package com.example.cooksmart_n19.fragments;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +20,21 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
-
+import android.Manifest;
+import android.app.Activity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,14 +46,26 @@ import com.example.cooksmart_n19.adapters.RecipeAdapter;
 import com.example.cooksmart_n19.models.Recipe;
 import com.example.cooksmart_n19.repositories.RecipeDetailsRepository;
 import com.example.cooksmart_n19.repositories.RecipeRepository;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.label.ImageLabel;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ExploreFragment extends Fragment {
 
@@ -52,16 +82,67 @@ public class ExploreFragment extends Fragment {
     private String currentCostSort = "Mặc định";
     private boolean isSearching = false;
     private FirebaseAuth mAuth;
-    private Map<String, Boolean> likeStatusMap; // Thêm để quản lý trạng thái "thích"
+    private Map<String, Boolean> likeStatusMap;
+    private ImageButton buttonCamera;
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<String> cameraPermissionLauncher;
+    private ActivityResultLauncher<String> storagePermissionLauncher;
+    private ImageCapture imageCapture;
+    private ImageLabeler imageLabeler;
+    private ProgressDialog progressDialog;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        cameraPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        openCamera();
+                    } else {
+                        showPermissionDeniedToast("Camera");
+                    }
+                });
+
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        handleImage(imageUri);
+                    }
+                });
+
+        storagePermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (!isGranted) {
+                        showPermissionDeniedToast("Storage");
+                    }
+                });
+
+        // Khởi tạo ML Kit Image Labeler
+        ImageLabelerOptions options = new ImageLabelerOptions.Builder()
+                .setConfidenceThreshold(0.65f)
+                .build();
+        imageLabeler = ImageLabeling.getClient(options);
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Đang phân tích ảnh...");
+        progressDialog.setCancelable(false);
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
 
+        // Initialize existing UI components
         editTextSearch = view.findViewById(R.id.editTextSearch);
         buttonFilter = view.findViewById(R.id.buttonFilter);
         recyclerViewSearchResults = view.findViewById(R.id.recyclerViewSearchResults);
+        buttonCamera = view.findViewById(R.id.buttonCamera);
 
         return view;
     }
@@ -70,45 +151,206 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Existing initialization code
         mAuth = FirebaseAuth.getInstance();
         recipeRepository = new RecipeRepository();
         detailsRepository = new RecipeDetailsRepository();
         allRecipes = new ArrayList<>();
-        likeStatusMap = new HashMap<>(); // Khởi tạo likeStatusMap
+        likeStatusMap = new HashMap<>();
 
         recipeAdapter = new RecipeAdapter(
                 allRecipes,
                 this::toggleLike,
                 this::navigateToRecipeDetail,
-                this // Truyền ExploreFragment để ItemRecipeAdapter có thể gọi isRecipeLiked()
+                this
         );
         recyclerViewSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewSearchResults.setAdapter(recipeAdapter);
 
+        // Existing search setup
         editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH ||
-                    (event != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER && event.getAction() == android.view.KeyEvent.ACTION_DOWN)) {
-                String query = editTextSearch.getText().toString().trim();
-                if (!query.isEmpty()) {
-                    Log.d("ExploreFragment", "Search triggered with query: " + query);
-                    currentQuery = query;
-                    searchRecipes(query);
-                } else {
-                    if (getContext() != null) {
-                        Toast.makeText(getContext(), "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show();
-                    }
-                    currentQuery = "";
-                    allRecipes.clear();
-                    recipeAdapter.updateRecipes(allRecipes);
-                }
-                return true;
-            }
-            return false;
+            handleSearchAction();
+            return true;
         });
 
         buttonFilter.setOnClickListener(v -> showFilterDialog());
+
+        // Camera button click listener
+        buttonCamera.setOnClickListener(v -> showImageSourceDialog());
     }
 
+    private void handleSearchAction() {
+        String query = editTextSearch.getText().toString().trim();
+        if (!query.isEmpty()) {
+            Log.d("ExploreFragment", "Search triggered with query: " + query);
+            currentQuery = query;
+            searchRecipes(query);
+        } else {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show();
+            }
+            currentQuery = "";
+            allRecipes.clear();
+            recipeAdapter.updateRecipes(allRecipes);
+        }
+    }
+
+    private void showImageSourceDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Chọn nguồn ảnh")
+                .setItems(new String[]{"Máy ảnh", "Thư viện"}, (dialog, which) -> {
+                    switch (which) {
+                        case 0: checkCameraPermission();
+                            break;
+                        case 1: openGallery();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            openCamera();
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void openGallery() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                storagePermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+                return;
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                storagePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                return;
+            }
+        }
+
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(intent);
+    }
+
+    private void openCamera() {
+        Dialog cameraDialog = new Dialog(requireContext());
+        cameraDialog.setContentView(R.layout.dialog_camera);
+
+        PreviewView previewView = cameraDialog.findViewById(R.id.previewView);
+        ImageButton captureButton = cameraDialog.findViewById(R.id.captureButton);
+
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+                ProcessCameraProvider.getInstance(requireContext());
+
+        cameraProviderFuture.addListener(() -> {
+            try {
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+
+                // Initialize preview
+                Preview preview = new Preview.Builder().build();
+                imageCapture = new ImageCapture.Builder()
+                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                        .build();
+
+                // Select back camera
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
+                // Bind use cases
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+                Camera camera = cameraProvider.bindToLifecycle(
+                        this, cameraSelector, preview, imageCapture);
+
+                // Setup capture button
+                captureButton.setOnClickListener(v -> captureImage(cameraDialog));
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Lỗi khởi động camera", Toast.LENGTH_SHORT).show();
+            }
+        }, ContextCompat.getMainExecutor(requireContext()));
+
+        cameraDialog.show();
+    }
+
+    private void captureImage(Dialog dialog) {
+        File photoFile = createImageFile();
+        ImageCapture.OutputFileOptions outputOptions =
+                new ImageCapture.OutputFileOptions.Builder(photoFile).build();
+
+        imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(requireContext()),
+                new ImageCapture.OnImageSavedCallback() {
+                    @Override
+                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                        Uri imageUri = Uri.fromFile(photoFile);
+                        handleImage(imageUri);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ImageCaptureException exception) {
+                        Toast.makeText(getContext(), "Lỗi chụp ảnh: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private File createImageFile() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return new File(storageDir, imageFileName + ".jpg");
+    }
+
+    private void handleImage(Uri imageUri) {
+        progressDialog.show();
+
+        try {
+            InputImage image = InputImage.fromFilePath(requireContext(), imageUri);
+
+            imageLabeler.process(image)
+                    .addOnSuccessListener(labels -> processImageResults(labels))
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(getContext(), "Lỗi phân tích ảnh", Toast.LENGTH_SHORT).show();
+                    });
+        } catch (IOException e) {
+            progressDialog.dismiss();
+            e.printStackTrace();
+        }
+    }
+
+    private void processImageResults(List<ImageLabel> labels) {
+        List<String> keywords = new ArrayList<>();
+        for (ImageLabel label : labels) {
+            if (label.getConfidence() >= 0.7f) {
+                keywords.add(label.getText().toLowerCase());
+            }
+        }
+
+        if (!keywords.isEmpty()) {
+            executeImageSearch(keywords);
+        } else {
+            progressDialog.dismiss();
+            Toast.makeText(getContext(), "Không nhận diện được thành phần món ăn", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void executeImageSearch(List<String> keywords) {
+        // Tận dụng cơ chế tìm kiếm hiện có
+        String searchQuery = String.join(" ", keywords);
+        currentQuery = searchQuery;
+        editTextSearch.setText(searchQuery);
+        searchRecipes(searchQuery);
+        progressDialog.dismiss();
+    }
+    private void showPermissionDeniedToast(String permission) {
+        Toast.makeText(getContext(),
+                "Cần cấp quyền " + permission + " để sử dụng tính năng này",
+                Toast.LENGTH_SHORT).show();
+    }
     private void showFilterDialog() {
         Dialog filterDialog = new Dialog(requireContext());
         filterDialog.setContentView(R.layout.dialog_filter);

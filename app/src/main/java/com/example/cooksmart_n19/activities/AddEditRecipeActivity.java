@@ -1,13 +1,11 @@
 package com.example.cooksmart_n19.activities;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -31,6 +29,10 @@ import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.adapters.IngredientAdapter;
 import com.example.cooksmart_n19.adapters.StepInputAdapter;
+import com.example.cooksmart_n19.dialogs.IngredientDialogManager;
+import com.example.cooksmart_n19.dialogs.StepDialogManager;
+import com.example.cooksmart_n19.models.CookingStep;
+import com.example.cooksmart_n19.models.IngredientItem;
 import com.example.cooksmart_n19.models.Recipe;
 import com.example.cooksmart_n19.repositories.MyRecipeRepository;
 import com.example.cooksmart_n19.utils.CloudinaryManager;
@@ -50,22 +52,24 @@ public class AddEditRecipeActivity extends AppCompatActivity {
     private TextInputEditText editTextCost;
     private TextInputEditText editTextCookingTime;
     private TextInputEditText editTextRecipeIntro;
+    private AutoCompleteTextView  editTextDifficulty;
     private ImageView imageViewRecipe;
-    private AutoCompleteTextView editTextDifficulty;
     private Button buttonAddIngredient, buttonUploadImage, buttonAddStep;
     private MaterialButton buttonSave;
     private RecyclerView recyclerViewIngredients, recyclerViewSteps;
-    private List<Recipe.IngredientItem> ingredientItemList;
-    private List<Recipe.CookingStep> cookingStepList;
+    private List<IngredientItem> ingredientItemList;
+    private List<CookingStep> cookingStepList;
     private Recipe recipe;
     private IngredientAdapter ingredientAdapter;
     private StepInputAdapter stepInputAdapter;
-    private Uri pendingImageUri, stepImageUri;
+    private Uri pendingImageUri;
     private ActivityResultLauncher<Intent> recipeImagePickerLauncher, stepImagePickerLauncher;
     private MyRecipeRepository repository;
     private FirebaseAuth mAuth;
     private boolean isEditing = false;
     private String recipeId;
+    private IngredientDialogManager ingredientDialogManager;
+    private StepDialogManager stepDialogManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +100,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Recipe loadedRecipe) {
                 recipe = loadedRecipe;
-                // Cập nhật danh sách nguyên liệu và bước nấu
-                ingredientItemList.clear();
-                cookingStepList.clear();
-                if (recipe.getIngredients() != null) {
-                    ingredientItemList.addAll(recipe.getIngredients());
-                }
-                if (recipe.getSteps() != null) {
-                    cookingStepList.addAll(recipe.getSteps());
-                }
-                // Cập nhật các trường
+                // Cập nhật các trường giao diện
                 editTextRecipeIntro.setText(recipe.getDescription());
                 editTextRecipeName.setText(recipe.getTitle());
                 editTextCost.setText(String.valueOf(recipe.getCost()));
@@ -114,13 +109,41 @@ public class AddEditRecipeActivity extends AppCompatActivity {
                 if (recipe.getImage() != null && !recipe.getImage().isEmpty()) {
                     Glide.with(AddEditRecipeActivity.this)
                             .load(recipe.getImage())
+                            .thumbnail(0.25f)
                             .placeholder(R.drawable.rice)
                             .error(R.drawable.rice)
                             .into(imageViewRecipe);
                 }
-                // Cập nhật RecyclerView
-                ingredientAdapter.updateIngredients(new ArrayList<>(ingredientItemList));
-                stepInputAdapter.updateSteps(new ArrayList<>(cookingStepList));
+
+                // Tải danh sách nguyên liệu từ subcollection
+                repository.loadIngredients(recipeId, new MyRecipeRepository.OnIngredientsLoadedListener() {
+                    @Override
+                    public void onIngredientsLoaded(List<IngredientItem> ingredients) {
+                        ingredientItemList.clear();
+                        ingredientItemList.addAll(ingredients);
+                        ingredientAdapter.updateIngredients(new ArrayList<>(ingredientItemList));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải nguyên liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Tải danh sách bước thực hiện từ subcollection
+                repository.loadSteps(recipeId, new MyRecipeRepository.OnStepsLoadedListener() {
+                    @Override
+                    public void onStepsLoaded(List<CookingStep> steps) {
+                        cookingStepList.clear();
+                        cookingStepList.addAll(steps);
+                        stepInputAdapter.updateSteps(new ArrayList<>(cookingStepList));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải bước thực hiện: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -132,6 +155,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
     }
 
     private void init() {
+        // Ánh xạ các thành phần giao diện
         editTextRecipeName = findViewById(R.id.editTextRecipeName);
         editTextCost = findViewById(R.id.editTextCost);
         editTextRecipeIntro = findViewById(R.id.editTextRecipeIntro);
@@ -150,9 +174,8 @@ public class AddEditRecipeActivity extends AppCompatActivity {
         recipe = new Recipe();
         ingredientItemList = new ArrayList<>();
         cookingStepList = new ArrayList<>();
-        recipe.setIngredients(ingredientItemList);
-        recipe.setSteps(cookingStepList);
 
+        // Thiết lập AutoCompleteTextView cho độ khó
         String[] difficulties = {"Khó", "Trung Bình", "Dễ"};
         ArrayAdapter<String> difficultyAdapter = new ArrayAdapter<>(
                 AddEditRecipeActivity.this,
@@ -161,6 +184,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
         );
         editTextDifficulty.setAdapter(difficultyAdapter);
 
+        // Thiết lập launcher để chọn ảnh
         recipeImagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -168,6 +192,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
                         Uri imageUri = result.getData().getData();
                         Glide.with(AddEditRecipeActivity.this)
                                 .load(imageUri)
+                                .thumbnail(0.25f)
                                 .placeholder(R.drawable.rice)
                                 .error(R.drawable.rice)
                                 .into(imageViewRecipe);
@@ -180,18 +205,27 @@ public class AddEditRecipeActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        stepImageUri = result.getData().getData();
+                        Uri imageUri = result.getData().getData();
+                        stepDialogManager.setStepImageUri(imageUri);
                     }
                 }
         );
 
-        ingredientAdapter = new IngredientAdapter(ingredientItemList, position -> showAddEditIngredientDialog(position));
-        stepInputAdapter = new StepInputAdapter(cookingStepList, position -> showAddEditStepDialog(position));
+        // Khởi tạo adapter và RecyclerView
+        ingredientAdapter = new IngredientAdapter(ingredientItemList, this::showAddEditIngredientDialog);
+        stepInputAdapter = new StepInputAdapter(cookingStepList, this::showAddEditStepDialog);
         recyclerViewIngredients.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSteps.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewIngredients.setAdapter(ingredientAdapter);
         recyclerViewSteps.setAdapter(stepInputAdapter);
 
+        // Khởi tạo các dialog manager
+        ingredientDialogManager = new IngredientDialogManager(this, ingredientItemList,
+                () -> ingredientAdapter.updateIngredients(new ArrayList<>(ingredientItemList)));
+        stepDialogManager = new StepDialogManager(this, cookingStepList, stepImagePickerLauncher,
+                () -> stepInputAdapter.updateSteps(new ArrayList<>(cookingStepList)));
+
+        // Thiết lập sự kiện click
         buttonAddIngredient.setOnClickListener(v -> showAddEditIngredientDialog(-1));
         buttonAddStep.setOnClickListener(v -> showAddEditStepDialog(-1));
         buttonUploadImage.setOnClickListener(v -> {
@@ -220,9 +254,9 @@ public class AddEditRecipeActivity extends AppCompatActivity {
             return;
         }
 
-        double cost;
+        long cost;
         try {
-            cost = Double.parseDouble(costStr);
+            cost = Long.parseLong(costStr);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Chi phí phải là số", Toast.LENGTH_SHORT).show();
             return;
@@ -240,8 +274,14 @@ public class AddEditRecipeActivity extends AppCompatActivity {
         recipe.setDescription(description);
         recipe.setCookingTime(Integer.parseInt(time));
         recipe.setDifficulty(difficulty);
-        recipe.setIngredients(new ArrayList<>(ingredientItemList));
-        recipe.setSteps(new ArrayList<>(cookingStepList));
+        if (isEditing) {
+            recipe.setRecipeId(recipeId);
+            // Kiểm tra quyền tác giả trước khi cập nhật
+            if (recipe.getAuthorId() != null && !recipe.getAuthorId().equals(authorId)) {
+                Toast.makeText(this, "Bạn không có quyền chỉnh sửa công thức này", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
 
         ProgressBar progressBar = findViewById(R.id.saveProgressBar);
 
@@ -263,7 +303,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
                             recipe.setImage(imageUrl);
 
                             // Lưu vào Firestore qua RecipeRepository
-                            repository.saveRecipe(recipe, new MyRecipeRepository.SaveMyRecipeCallback() {
+                            repository.saveRecipe(authorId, recipe, ingredientItemList, cookingStepList, new MyRecipeRepository.SaveMyRecipeCallback() {
                                 @Override
                                 public void onSuccess(Recipe savedRecipe) {
                                     Log.d("MyApp", "Recipe saved successfully: " + savedRecipe.toString());
@@ -301,12 +341,14 @@ public class AddEditRecipeActivity extends AppCompatActivity {
                 buttonSave.setEnabled(true);
             }
         } else {
-            // Không có ảnh, lưu trực tiếp vào Firestore
-            recipe.setImage(null);
+            // Không có ảnh mới, giữ ảnh cũ (nếu có) hoặc đặt null
+            if (!isEditing || recipe.getImage() == null) {
+                recipe.setImage(null);
+            }
             progressBar.setVisibility(View.VISIBLE);
             buttonSave.setEnabled(false);
 
-            repository.saveRecipe(recipe, new MyRecipeRepository.SaveMyRecipeCallback() {
+            repository.saveRecipe(authorId, recipe, ingredientItemList, cookingStepList, new MyRecipeRepository.SaveMyRecipeCallback() {
                 @Override
                 public void onSuccess(Recipe savedRecipe) {
                     Log.d("MyApp", "Recipe saved successfully: " + savedRecipe.toString());
@@ -328,178 +370,15 @@ public class AddEditRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void showAddEditStepDialog(int position) {
-        boolean isEdit = position != -1;
-        Recipe.CookingStep step = isEdit ? cookingStepList.get(position) : new Recipe.CookingStep();
-        stepImageUri = null;
-
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_step, null);
-        TextInputEditText editTextStepInstruction = dialogView.findViewById(R.id.editTextStepInstruction);
-        ImageView imageViewStepPreview = dialogView.findViewById(R.id.imageViewStepPreview);
-        MaterialButton buttonUploadStepImage = dialogView.findViewById(R.id.buttonUploadStepImage);
-        ProgressBar progressBar = dialogView.findViewById(R.id.progressBar);
-
-        if (isEdit) {
-            editTextStepInstruction.setText(step.getInstruction());
-            if (step.getImages() != null && !step.getImages().isEmpty()) {
-                imageViewStepPreview.setVisibility(View.VISIBLE);
-                Glide.with(this).load(step.getImages()).into(imageViewStepPreview);
-                Log.d("StepEdit", "Loading existing image: " + step.getImages());
-            } else {
-                imageViewStepPreview.setVisibility(View.GONE);
-            }
-        } else {
-            imageViewStepPreview.setVisibility(View.GONE);
-        }
-
-        buttonUploadStepImage.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            stepImagePickerLauncher.launch(intent);
-        });
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(isEdit ? "Sửa bước" : "Thêm bước")
-                .setView(dialogView)
-                .setPositiveButton(isEdit ? "Sửa" : "Thêm", null)
-                .setNegativeButton("Hủy", null)
-                .create();
-
-        dialog.setOnShowListener(d -> {
-            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positiveButton.setOnClickListener(v -> {
-                String instruction = editTextStepInstruction.getText().toString().trim();
-                if (instruction.isEmpty()) {
-                    Toast.makeText(AddEditRecipeActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (stepImageUri != null) {
-                    try {
-                        progressBar.setVisibility(View.VISIBLE);
-                        positiveButton.setEnabled(false);
-                        Uri compressedUri = compressImage(stepImageUri);
-                        CloudinaryManager.uploadImage(compressedUri, "recipe", new CloudinaryManager.CloudinaryUploadCallback() {
-                            @Override
-                            public void onStart() {}
-                            @Override
-                            public void onProgress(long bytes, long totalBytes) {}
-                            @Override
-                            public void onSuccess(String imageUrl) {
-                                runOnUiThread(() -> {
-                                    Log.d("StepUpload", "Uploaded new image URL: " + imageUrl);
-                                    step.setInstruction(instruction);
-                                    step.setImages(imageUrl);
-                                    updateStepList(step, position);
-                                    progressBar.setVisibility(View.GONE);
-                                    positiveButton.setEnabled(true);
-                                    dialog.dismiss();
-                                });
-                            }
-                            @Override
-                            public void onError(String errorMessage) {
-                                runOnUiThread(() -> {
-                                    Log.e("StepUploadError", "Upload failed: " + errorMessage);
-                                    Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải ảnh: " + errorMessage, Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    positiveButton.setEnabled(true);
-                                });
-                            }
-                        });
-                    } catch (IOException e) {
-                        Log.e("CompressionError", "Failed to compress image", e);
-                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi nén ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
-                        positiveButton.setEnabled(true);
-                    }
-                } else {
-                    Log.d("StepEdit", "Keeping old image: " + step.getImages());
-                    step.setInstruction(instruction);
-                    updateStepList(step, position);
-                    dialog.dismiss();
-                }
-            });
-
-            if (stepImageUri != null) {
-                Glide.with(this)
-                        .load(stepImageUri)
-                        .placeholder(R.drawable.rice)
-                        .error(R.drawable.rice)
-                        .into(imageViewStepPreview);
-                imageViewStepPreview.setVisibility(View.VISIBLE);
-            }
-        });
-
-        dialog.setOnDismissListener(d -> stepImageUri = null);
-        dialog.show();
-    }
-
-    private void updateStepList(Recipe.CookingStep step, int position) {
-        if (position == -1) {
-            step.setStepNumber(cookingStepList.size() + 1);
-            cookingStepList.add(step);
-            Log.d("StepList", "Added new step, size: " + cookingStepList.size() + ", Image: " + step.getImages());
-        } else {
-            step.setStepNumber(position + 1);
-            cookingStepList.set(position, step);
-            Log.d("StepList", "Updated step at position " + position + ", Image: " + step.getImages());
-        }
-        stepInputAdapter.updateSteps(new ArrayList<>(cookingStepList));
-    }
-
     private void showAddEditIngredientDialog(int position) {
-        boolean isEdit = position != -1;
-        Recipe.IngredientItem ingredientItem = isEdit ? ingredientItemList.get(position) : new Recipe.IngredientItem();
-
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_ingredient, null);
-        TextInputEditText editTextIngredientName = dialogView.findViewById(R.id.editTextIngredientName);
-        TextInputEditText editTextQuantity = dialogView.findViewById(R.id.editTextQuantity);
-        TextInputEditText editTextUnit = dialogView.findViewById(R.id.editTextUnit);
-
-        if (isEdit) {
-            editTextIngredientName.setText(ingredientItem.getIngredientName());
-            editTextQuantity.setText(String.valueOf(ingredientItem.getQuantity()));
-            editTextUnit.setText(ingredientItem.getUnit());
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle(isEdit ? "Sửa thông tin nguyên liệu" : "Thêm nguyên liệu")
-                .setView(dialogView)
-                .setPositiveButton(isEdit ? "Lưu" : "Thêm", (dialog, which) -> {
-                    String ingredientName = editTextIngredientName.getText().toString().trim();
-                    String quantityIngredient = editTextQuantity.getText().toString().trim();
-                    String unit = editTextUnit.getText().toString().trim();
-
-                    if (ingredientName.isEmpty() || quantityIngredient.isEmpty() || unit.isEmpty()) {
-                        Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    double quantity;
-                    try {
-                        quantity = Double.parseDouble(quantityIngredient);
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(this, "Số lượng phải là số", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    ingredientItem.setIngredientName(ingredientName);
-                    ingredientItem.setQuantity(quantity);
-                    ingredientItem.setUnit(unit);
-
-                    if (isEdit) {
-                        ingredientItemList.set(position, ingredientItem);
-                    } else {
-                        ingredientItemList.add(ingredientItem);
-                    }
-
-                    ingredientAdapter.updateIngredients(new ArrayList<>(ingredientItemList));
-                })
-                .setNegativeButton("Hủy", null)
-                .show();
+        ingredientDialogManager.showAddEditIngredientDialog(position);
     }
 
-    private Uri compressImage(Uri imageUri) throws IOException {
+    private void showAddEditStepDialog(int position) {
+        stepDialogManager.showAddEditStepDialog(position);
+    }
+
+    public Uri compressImage(Uri imageUri) throws IOException {
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream);

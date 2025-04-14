@@ -11,15 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
+import com.example.cooksmart_n19.models.CookingStep;
 import com.example.cooksmart_n19.models.Recipe;
 
 import java.util.List;
 
 public class CookingStepAdapter extends RecyclerView.Adapter<CookingStepAdapter.StepViewHolder> {
 
-    private List<Recipe.CookingStep> steps;
+    private List<CookingStep> steps;
 
-    public CookingStepAdapter(List<Recipe.CookingStep> steps) {
+    public CookingStepAdapter(List<CookingStep> steps) {
         this.steps = steps;
     }
 
@@ -32,7 +33,7 @@ public class CookingStepAdapter extends RecyclerView.Adapter<CookingStepAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull StepViewHolder holder, int position) {
-        Recipe.CookingStep step = steps.get(position);
+        CookingStep step = steps.get(position);
 
         // Cập nhật tiêu đề bước
         holder.stepTitle.setText("Bước " + step.getStepNumber());

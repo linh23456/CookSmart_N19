@@ -18,7 +18,6 @@ import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.activities.RecipeDetailActivity;
 import com.example.cooksmart_n19.adapters.ItemRecipeAdapter;
 import com.example.cooksmart_n19.models.Recipe;
-import com.example.cooksmart_n19.repositories.RecipeDetailsRepository;
 import com.example.cooksmart_n19.repositories.RecipeRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,7 +34,6 @@ public class HomeFragment extends Fragment {
     private ItemRecipeAdapter featuredAdapter;
     private ItemRecipeAdapter recentAdapter;
     private RecipeRepository repository;
-    private RecipeDetailsRepository detailsRepository;
     private FirebaseAuth mAuth;
     private Map<String, Boolean> likeStatusMap;
 
@@ -55,7 +53,6 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         repository = new RecipeRepository();
-        detailsRepository = new RecipeDetailsRepository();
         likeStatusMap = new HashMap<>();
         setupRecyclerViews();
         loadRecipes();
@@ -165,24 +162,19 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void navigateToRecipeDetail(Recipe recipe, int position) {
-        Log.d("My App", recipe.getRecipeId());
-        detailsRepository.getRecipeDetails(recipe.getRecipeId(), new RecipeDetailsRepository.OnRecipeDetailsListener() {
-            @Override
-            public void onSuccess(Recipe fullRecipe) {
-                fullRecipe = recipe;
-                Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
-                intent.putExtra("recipe_id", fullRecipe.getRecipeId());
-                startActivity(intent);
+    private void navigateToRecipeDetail(Recipe recipe, int postion) {
+        // Kiểm tra recipeId trước khi điều hướng
+        if (recipe.getRecipeId() == null || recipe.getRecipeId().isEmpty()) {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Lỗi: Không tìm thấy ID công thức", Toast.LENGTH_SHORT).show();
             }
+            return;
+        }
 
-            @Override
-            public void onError(String error) {
-                if (getContext() != null) {
-                    Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Log.d("My App", "Navigating to recipe detail with ID: " + recipe.getRecipeId());
+        Intent intent = new Intent(getActivity(), RecipeDetailActivity.class);
+        intent.putExtra("recipe_id", recipe.getRecipeId());
+        startActivity(intent);
     }
 
     public boolean isRecipeLiked(String recipeId) {

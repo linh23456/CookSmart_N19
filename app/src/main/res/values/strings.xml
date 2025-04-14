@@ -4,4 +4,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="image_login">Image login</string>
     <string name="title_activity_main">MainActivity</string>
+    <string-array name="diet_options">
+        <item>Bình thường</item>
+        <item>Chay</item>
+        <item>Keto</item>
+        <item>Low-carb</item>
+        <item>Không đường</item>
+    </string-array>
+    <string name="gemini_api_key">AIzaSyCCWouY-wIgDDJethIn-PFOe_CYvkch5ng</string>
 </resources>
