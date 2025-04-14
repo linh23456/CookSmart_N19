@@ -69,18 +69,18 @@ public class ExploreFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         recipeRepository = new RecipeRepository();
-        allRecipes = new ArrayList<>();
-        likeStatusMap = new HashMap<>(); // Khởi tạo likeStatusMap
+        allRecipes = new ArrayList<>();// danh sách chứa toàn bộ công thức tìm được.
+        likeStatusMap = new HashMap<>(); // Khởi tạo likeStatusMap, để biết công thức đã được người dùng "thích" chưa.
 
         recipeAdapter = new RecipeAdapter(
                 allRecipes,
-                this::toggleLike,
-                this::navigateToRecipeDetail,
+                this::toggleLike,//hàm xử lý khi người dùng nhấn "thích"
+                this::navigateToRecipeDetail,//xử lý khi người dùng bấm vào item.
                 this // Truyền ExploreFragment để ItemRecipeAdapter có thể gọi isRecipeLiked()
         );
         recyclerViewSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewSearchResults.setAdapter(recipeAdapter);
-
+        recyclerViewSearchResults.setAdapter(recipeAdapter);//Gắn adapter đã tạo vào RecyclerView.
+//Xử lý sự kiện người dùng nhập từ khóa tìm kiếm
         editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH ||
                     (event != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER && event.getAction() == android.view.KeyEvent.ACTION_DOWN)) {
@@ -88,7 +88,7 @@ public class ExploreFragment extends Fragment {
                 if (!query.isEmpty()) {
                     Log.d("ExploreFragment", "Search triggered with query: " + query);
                     currentQuery = query;
-                    searchRecipes(query);
+                    searchRecipes(query);//Lưu vào currentQuery và gọi hàm searchRecipes(query) để thực hiện tìm kiếm.
                 } else {
                     if (getContext() != null) {
                         Toast.makeText(getContext(), "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show();
@@ -104,7 +104,7 @@ public class ExploreFragment extends Fragment {
 
         buttonFilter.setOnClickListener(v -> showFilterDialog());
     }
-
+//Hiển thị dialog lọc theo thời gian nấu, độ khó và chi phí.
     private void showFilterDialog() {
         Dialog filterDialog = new Dialog(requireContext());
         filterDialog.setContentView(R.layout.dialog_filter);
@@ -169,7 +169,7 @@ public class ExploreFragment extends Fragment {
 
         filterDialog.show();
     }
-
+//Tìm kiếm công thức dựa trên từ khóa và bộ lọc hiện tại.
     private void searchRecipes(String query) {
         if (isSearching) {
             Log.d("ExploreFragment", "Search already in progress, ignoring query: " + query);
