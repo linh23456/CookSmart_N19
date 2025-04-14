@@ -16,7 +16,7 @@ import java.util.List;
 
 public class StepPagerAdapter extends RecyclerView.Adapter<StepPagerAdapter.StepViewHolder> {
 
-    private List<String> steps;
+    private final List<String> steps;
 
     public StepPagerAdapter(List<String> steps) {
         this.steps = steps;
@@ -43,7 +43,7 @@ public class StepPagerAdapter extends RecyclerView.Adapter<StepPagerAdapter.Step
     static class StepViewHolder extends RecyclerView.ViewHolder {
         TextView tvStep;
 
-        public StepViewHolder(@NonNull View itemView) {
+        StepViewHolder(@NonNull View itemView) {
             super(itemView);
             tvStep = itemView.findViewById(R.id.tv_step);
         }

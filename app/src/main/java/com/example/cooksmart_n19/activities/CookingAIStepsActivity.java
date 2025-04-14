@@ -1,14 +1,18 @@
 package com.example.cooksmart_n19.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.adapters.StepPagerAdapter;
+import com.example.cooksmart_n19.fragments.AssistantFragment;
 
 import java.util.List;
 
@@ -31,7 +35,7 @@ public class CookingAIStepsActivity extends AppCompatActivity {
         setupNavigationButtons();
         btnExit = findViewById(R.id.btnExit);
         btnExit.setOnClickListener(v -> {
-            finish(); // Đóng Activity và quay lại Fragment trước đó
+            finish();
         });
     }
 
