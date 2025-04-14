@@ -87,6 +87,7 @@ public class CookingStepsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isActivityActive = false;
+        adapter.shutdown(); // Dọn dẹp TTS
         Log.d(TAG, "onDestroy called");
     }
 
@@ -95,7 +96,7 @@ public class CookingStepsActivity extends AppCompatActivity {
         stepsViewPager = findViewById(R.id.steps_view_pager);
         stepProgress = findViewById(R.id.step_progress);
 
-        adapter = new CookingStepAdapter(steps);
+        adapter = new CookingStepAdapter(this, steps); // Truyền context để khởi tạo TTS
         stepsViewPager.setAdapter(adapter);
         stepsViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
 
@@ -116,31 +117,6 @@ public class CookingStepsActivity extends AppCompatActivity {
         });
 
         closeButton.setOnClickListener(v -> finish());
-    }
-
-    private void loadRecipeDetails() {
-        repository.getRecipeById(recipeId, new MyRecipeRepository.GetSingleRecipeCallback() {
-            @Override
-            public void onSuccess(Recipe loadedRecipe) {
-                if (!isActivityActive) {
-                    Log.w(TAG, "Activity is no longer active, skipping onSuccess");
-                    return;
-                }
-
-                recipe = loadedRecipe;
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                if (!isActivityActive) {
-                    Log.w(TAG, "Activity is no longer active, skipping onFailure");
-                    return;
-                }
-
-                Log.e(TAG, "Error loading recipe: " + errorMessage);
-                Toast.makeText(CookingStepsActivity.this, "Lỗi tải công thức: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void loadSteps(String recipeId) {

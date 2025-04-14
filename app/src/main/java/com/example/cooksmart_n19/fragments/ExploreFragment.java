@@ -183,10 +183,7 @@ public class ExploreFragment extends Fragment {
                 isSearching = false;
             }
         }, 5000);
-
-        String normalizedQuery = query.toLowerCase();
-        Log.d("ExploreFragment", "Searching for normalized query: " + normalizedQuery);
-        recipeRepository.searchRecipesByKeyword(normalizedQuery, currentCookingTimeSort, currentDifficultyFilter, currentCostSort, recipes -> {
+        recipeRepository.searchRecipesByKeyword(query, currentCookingTimeSort, currentDifficultyFilter, currentCostSort, recipes -> {
             Log.d("ExploreFragment", "Recipes received: " + recipes.size());
             allRecipes.clear();
             allRecipes.addAll(recipes);

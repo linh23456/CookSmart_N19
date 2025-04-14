@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.adapters.IngredientAdapter;
-import com.example.cooksmart_n19.adapters.StepInputAdapter;
+import com.example.cooksmart_n19.adapters.StepAdapter;
 import com.example.cooksmart_n19.dialogs.IngredientDialogManager;
 import com.example.cooksmart_n19.dialogs.StepDialogManager;
 import com.example.cooksmart_n19.models.CookingStep;
@@ -61,7 +61,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
     private List<CookingStep> cookingStepList;
     private Recipe recipe;
     private IngredientAdapter ingredientAdapter;
-    private StepInputAdapter stepInputAdapter;
+    private StepAdapter stepInputAdapter;
     private Uri pendingImageUri;
     private ActivityResultLauncher<Intent> recipeImagePickerLauncher, stepImagePickerLauncher;
     private MyRecipeRepository repository;
@@ -93,65 +93,6 @@ public class AddEditRecipeActivity extends AppCompatActivity {
             isEditing = true;
             loadRecipeForEditing(recipeId);
         }
-    }
-
-    private void loadRecipeForEditing(String recipeId) {
-        repository.getRecipeById(recipeId, new MyRecipeRepository.GetSingleRecipeCallback() {
-            @Override
-            public void onSuccess(Recipe loadedRecipe) {
-                recipe = loadedRecipe;
-                // Cập nhật các trường giao diện
-                editTextRecipeIntro.setText(recipe.getDescription());
-                editTextRecipeName.setText(recipe.getTitle());
-                editTextCost.setText(String.valueOf(recipe.getCost()));
-                editTextCookingTime.setText(String.valueOf(recipe.getCookingTime()));
-                editTextDifficulty.setText(recipe.getDifficulty());
-                if (recipe.getImage() != null && !recipe.getImage().isEmpty()) {
-                    Glide.with(AddEditRecipeActivity.this)
-                            .load(recipe.getImage())
-                            .thumbnail(0.25f)
-                            .placeholder(R.drawable.rice)
-                            .error(R.drawable.rice)
-                            .into(imageViewRecipe);
-                }
-
-                // Tải danh sách nguyên liệu từ subcollection
-                repository.loadIngredients(recipeId, new MyRecipeRepository.OnIngredientsLoadedListener() {
-                    @Override
-                    public void onIngredientsLoaded(List<IngredientItem> ingredients) {
-                        ingredientItemList.clear();
-                        ingredientItemList.addAll(ingredients);
-                        ingredientAdapter.updateIngredients(new ArrayList<>(ingredientItemList));
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải nguyên liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                // Tải danh sách bước thực hiện từ subcollection
-                repository.loadSteps(recipeId, new MyRecipeRepository.OnStepsLoadedListener() {
-                    @Override
-                    public void onStepsLoaded(List<CookingStep> steps) {
-                        cookingStepList.clear();
-                        cookingStepList.addAll(steps);
-                        stepInputAdapter.updateSteps(new ArrayList<>(cookingStepList));
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải bước thực hiện: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải công thức: " + errorMessage, Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
     }
 
     private void init() {
@@ -213,7 +154,7 @@ public class AddEditRecipeActivity extends AppCompatActivity {
 
         // Khởi tạo adapter và RecyclerView
         ingredientAdapter = new IngredientAdapter(ingredientItemList, this::showAddEditIngredientDialog);
-        stepInputAdapter = new StepInputAdapter(cookingStepList, this::showAddEditStepDialog);
+        stepInputAdapter = new StepAdapter(cookingStepList, this::showAddEditStepDialog);
         recyclerViewIngredients.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSteps.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewIngredients.setAdapter(ingredientAdapter);
@@ -234,6 +175,64 @@ public class AddEditRecipeActivity extends AppCompatActivity {
             recipeImagePickerLauncher.launch(intent);
         });
         buttonSave.setOnClickListener(v -> saveRecipe());
+    }
+    private void loadRecipeForEditing(String recipeId) {
+        repository.getRecipeById(recipeId, new MyRecipeRepository.GetSingleRecipeCallback() {
+            @Override
+            public void onSuccess(Recipe loadedRecipe) {
+                recipe = loadedRecipe;
+                // Cập nhật các trường giao diện
+                editTextRecipeIntro.setText(recipe.getDescription());
+                editTextRecipeName.setText(recipe.getTitle());
+                editTextCost.setText(String.valueOf(recipe.getCost()));
+                editTextCookingTime.setText(String.valueOf(recipe.getCookingTime()));
+                editTextDifficulty.setText(recipe.getDifficulty());
+                if (recipe.getImage() != null && !recipe.getImage().isEmpty()) {
+                    Glide.with(AddEditRecipeActivity.this)
+                            .load(recipe.getImage())
+                            .thumbnail(0.25f)
+                            .placeholder(R.drawable.rice)
+                            .error(R.drawable.rice)
+                            .into(imageViewRecipe);
+                }
+
+                // Tải danh sách nguyên liệu từ subcollection
+                repository.loadIngredients(recipeId, new MyRecipeRepository.OnIngredientsLoadedListener() {
+                    @Override
+                    public void onIngredientsLoaded(List<IngredientItem> ingredients) {
+                        ingredientItemList.clear();
+                        ingredientItemList.addAll(ingredients);
+                        ingredientAdapter.updateIngredients(new ArrayList<>(ingredientItemList));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải nguyên liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Tải danh sách bước thực hiện từ subcollection
+                repository.loadSteps(recipeId, new MyRecipeRepository.OnStepsLoadedListener() {
+                    @Override
+                    public void onStepsLoaded(List<CookingStep> steps) {
+                        cookingStepList.clear();
+                        cookingStepList.addAll(steps);
+                        stepInputAdapter.updateSteps(new ArrayList<>(cookingStepList));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải bước thực hiện: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(AddEditRecipeActivity.this, "Lỗi tải công thức: " + errorMessage, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
     private void saveRecipe() {

@@ -42,7 +42,8 @@ public class MyRecipeRepository {
             String recipeId = db.collection(COLLECTION_RECIPE).document().getId();
             recipe.setRecipeId(recipeId);
             recipe.setAuthorId(userId);
-            recipe.setCreatedAt(new Date());
+            recipe.setCreatedAt(Timestamp.now());
+            recipe.setUpdatedAt(Timestamp.now());
         }
 
         // Sử dụng batch để lưu dữ liệu đồng bộ

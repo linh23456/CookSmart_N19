@@ -64,6 +64,28 @@
                 android:textSize="16sp"
                 android:lineSpacingExtra="6dp" />
 
+            <!-- Nút phát TTS -->
+            <ImageButton
+                android:id="@+id/playTtsButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_media_play"
+            android:contentDescription="Phát âm thanh"
+            android:background="?android:attr/selectableItemBackground" />
+
+            <!-- Nút dừng TTS -->
+            <ImageButton
+                android:id="@+id/stopTtsButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_media_stop"
+            android:contentDescription="Dừng âm thanh"
+            android:background="?android:attr/selectableItemBackground" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

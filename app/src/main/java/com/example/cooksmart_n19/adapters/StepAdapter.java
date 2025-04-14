@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.models.CookingStep;
-import com.example.cooksmart_n19.models.Recipe;
+
 import java.util.List;
 
-public class StepInputAdapter extends RecyclerView.Adapter<StepInputAdapter.StepInputViewHolder> {
+public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepInputViewHolder> {
     private List<CookingStep> cookingStepList;
     private OnStepClickListener stepClickListener;
 
-    public StepInputAdapter(List<CookingStep> steps, OnStepClickListener stepClickListener) {
+    public StepAdapter(List<CookingStep> steps, OnStepClickListener stepClickListener) {
         this.cookingStepList = steps;
         this.stepClickListener = stepClickListener;
     }

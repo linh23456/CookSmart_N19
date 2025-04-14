@@ -71,7 +71,7 @@ public class RecipeRepository {
 
     public void getRecentRecipes(RecipeCallback callback) {
         Query query = db.collection("recipes")
-                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .orderBy("createAt", Query.Direction.DESCENDING)
                 .limit(10);
 
         query.get()

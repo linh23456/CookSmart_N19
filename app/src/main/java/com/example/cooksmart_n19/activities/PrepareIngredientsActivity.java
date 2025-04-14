@@ -21,10 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Activity hiển thị danh sách nguyên liệu của một công thức nấu ăn.
- * Người dùng có thể đánh dấu các nguyên liệu đã chuẩn bị và nhấn "Tiếp tục" để chuyển sang bước nấu ăn.
- */
 public class PrepareIngredientsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewPrepareIngredients;
@@ -35,7 +31,6 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
     private List<IngredientItem> ingredientItemList;
     private String recipeId;
     private static final String TAG = "PrepareIngredients";
-    private boolean isActivityActive = true; // Kiểm tra trạng thái activity
     private FirebaseAuth mAuth;
 
     @Override
@@ -53,7 +48,6 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isActivityActive = false; // Đánh dấu activity không còn hoạt động
         Log.d(TAG, "onDestroy called");
     }
 
@@ -122,11 +116,6 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
         repository.loadIngredients(recipeId, new MyRecipeRepository.OnIngredientsLoadedListener() {
             @Override
             public void onIngredientsLoaded(List<IngredientItem> ingredients) {
-                // Kiểm tra xem activity còn hoạt động không trước khi xử lý
-                if (!isActivityActive) {
-                    Log.w(TAG, "Activity is no longer active, skipping onIngredientsLoaded");
-                    return;
-                }
 
                 // Ẩn ProgressBar
                 progressBar.setVisibility(View.GONE);
@@ -149,11 +138,6 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
 
             @Override
             public void onError(Exception e) {
-                // Kiểm tra xem activity còn hoạt động không trước khi xử lý
-                if (!isActivityActive) {
-                    Log.w(TAG, "Activity is no longer active, skipping onError");
-                    return;
-                }
 
                 // Ẩn ProgressBar
                 progressBar.setVisibility(View.GONE);

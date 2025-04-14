@@ -20,9 +20,9 @@ public class Recipe {
     private int ratingCount;
     private boolean isLiked;
     @ServerTimestamp
-    private Date createdAt;
+    private Timestamp createdAt;
     @ServerTimestamp
-    private Date updatedAt;
+    private Timestamp updatedAt;
 
     // Constructor mặc định (yêu cầu bởi Firestore)
     public Recipe() {
@@ -31,7 +31,7 @@ public class Recipe {
         this.isLiked = false;
     }
 
-    public Recipe(String recipeId, String authorId, String title, String description, long cost, int cookingTime, String difficulty, String image, double averageRating, int ratingCount, Date createdAt, Date updatedAt) {
+    public Recipe(String recipeId, String authorId, String title, String description, long cost, int cookingTime, String difficulty, String image, double averageRating, int ratingCount, Timestamp createdAt, Timestamp updatedAt) {
         this.recipeId = recipeId;
         this.authorId = authorId;
         this.title = title;
@@ -136,19 +136,19 @@ public class Recipe {
         isLiked = liked;
     }
 
-    public Date getCreateAt() {
+    public Timestamp getCreateAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createAt) {
+    public void setCreatedAt(Timestamp createAt) {
         this.createdAt = createAt;
     }
 
-    public Date getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 

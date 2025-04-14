@@ -5,11 +5,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.fragments.FavoriteFragment;
 import com.example.cooksmart_n19.models.Recipe;
@@ -54,6 +56,11 @@ public class FavoriteRecipeAdapter extends RecyclerView.Adapter<FavoriteRecipeAd
         holder.textViewDifficulty.setText("Độ khó: " + recipe.getDifficulty());
         holder.textViewCookingTime.setText("Thời gian: " + recipe.getCookingTime() + " phút");
         holder.textViewCost.setText("Chi phí: " + recipe.getCost() + " VNĐ");
+        Glide.with(holder.itemView.getContext())
+                .load(recipe.getImage())
+                .placeholder(R.drawable.rice)
+                .error(R.drawable.rice)
+                .into(holder.imageViewRecipe);
 
         // Cập nhật trạng thái nút "Thích"
         if (favoriteFragment != null) {
@@ -82,6 +89,7 @@ public class FavoriteRecipeAdapter extends RecyclerView.Adapter<FavoriteRecipeAd
         TextView textViewCost;
         ImageButton buttonLike;
         Button buttonDetail;
+        ImageView imageViewRecipe;
 
         public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +99,7 @@ public class FavoriteRecipeAdapter extends RecyclerView.Adapter<FavoriteRecipeAd
             textViewCost = itemView.findViewById(R.id.textViewCost);
             buttonLike = itemView.findViewById(R.id.buttonLike);
             buttonDetail = itemView.findViewById(R.id.buttonViewDetail);
+            imageViewRecipe = itemView.findViewById(R.id.imageViewRecipe);
         }
     }
 }
