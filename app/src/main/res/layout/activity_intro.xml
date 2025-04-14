@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#4DB6AC">
+
+    <!-- Container chính với nền cam và bo góc -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Logo với viền trắng và khung xanh -->
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/rounded_logo_background">
+
+            <ImageView
+                android:id="@+id/logoImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_2" />
+        </FrameLayout>
+
+        <!-- Container cho dĩa và dao -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center_horizontal">
+
+            <!-- Hình ảnh dĩa (fork) -->
+            <ImageView
+                android:id="@+id/forkImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="25dp"
+                android:src="@drawable/fork"
+                android:translationX="-300dp" />
+
+            <!-- Hình ảnh dao (knife) -->
+            <ImageView
+                android:id="@+id/kitchenImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="25dp"
+                android:src="@drawable/kitchen"
+                android:translationX="40dp"/>
+
+            <ImageView
+                android:id="@+id/knifeImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_toEndOf="@id/forkImage"
+                android:src="@drawable/knife"
+                android:translationX="300dp" />
+        </RelativeLayout>
+
+        <!-- Tiêu đề "ARE YOU HUNGRY" -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ARE YOU HUNGRY"
+            android:textColor="@android:color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="48dp" />
+
+        <!-- Thanh loading dạng ngang -->
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="250dp"
+            android:layout_height="12dp"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_drawable" />
+
+        <!-- Text hiển thị phần trăm -->
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="0%"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>
