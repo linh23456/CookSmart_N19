@@ -157,11 +157,6 @@ public class PrepareIngredientsActivity extends AppCompatActivity {
      * Kiểm tra xem tất cả nguyên liệu đã được đánh dấu chưa trước khi chuyển sang bước nấu ăn.
      */
     private void startCooking() {
-        if (adapter == null) {
-            Log.e(TAG, "Adapter is null, cannot proceed");
-            Toast.makeText(this, "Không thể kiểm tra nguyên liệu. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         if (adapter.areAllIngredientsChecked()) {
             Intent intent = new Intent(this, CookingStepsActivity.class);

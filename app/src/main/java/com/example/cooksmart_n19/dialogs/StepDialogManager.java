@@ -31,6 +31,7 @@ public class StepDialogManager {
     private final ActivityResultLauncher<Intent> stepImagePickerLauncher;
     private final Runnable onUpdateCallback;
     private Uri stepImageUri;
+    private ImageView imageViewStepPreview; // Di chuyển thành biến instance để truy cập dễ dàng
 
     public StepDialogManager(Context context, List<CookingStep> cookingStepList, ActivityResultLauncher<Intent> stepImagePickerLauncher, Runnable onUpdateCallback) {
         this.context = context;
@@ -44,31 +45,29 @@ public class StepDialogManager {
         CookingStep step = isEdit ? cookingStepList.get(position) : new CookingStep();
         stepImageUri = null;
 
+        // Tạo dialog view
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_step, null);
         TextInputEditText editTextStepInstruction = dialogView.findViewById(R.id.editTextStepInstruction);
-        ImageView imageViewStepPreview = dialogView.findViewById(R.id.imageViewStepPreview);
+        imageViewStepPreview = dialogView.findViewById(R.id.imageViewStepPreview); // Ánh xạ ở đây
         MaterialButton buttonUploadStepImage = dialogView.findViewById(R.id.buttonUploadStepImage);
         ProgressBar progressBar = dialogView.findViewById(R.id.progressBar);
 
+        // Hiển thị nội dung ban đầu
         if (isEdit) {
             editTextStepInstruction.setText(step.getInstruction());
-            if (step.getImages() != null && !step.getImages().isEmpty()) {
-                imageViewStepPreview.setVisibility(View.VISIBLE);
-                Glide.with(context).load(step.getImages()).thumbnail(0.25f).into(imageViewStepPreview);
-                Log.d("StepEdit", "Loading existing image: " + step.getImages());
-            } else {
-                imageViewStepPreview.setVisibility(View.GONE);
-            }
+            displayStepImage(step.getImages()); // Hiển thị ảnh hiện có của bước
         } else {
-            imageViewStepPreview.setVisibility(View.GONE);
+            imageViewStepPreview.setVisibility(View.GONE); // Ẩn ImageView nếu là bước mới
         }
 
+        // Xử lý sự kiện upload ảnh
         buttonUploadStepImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
             stepImagePickerLauncher.launch(intent);
         });
 
+        // Tạo và hiển thị dialog
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(isEdit ? "Sửa bước" : "Thêm bước")
                 .setView(dialogView)
@@ -130,20 +129,50 @@ public class StepDialogManager {
                     dialog.dismiss();
                 }
             });
-
-            if (stepImageUri != null) {
-                Glide.with(context)
-                        .load(stepImageUri)
-                        .thumbnail(0.25f)
-                        .placeholder(R.drawable.rice)
-                        .error(R.drawable.rice)
-                        .into(imageViewStepPreview);
-                imageViewStepPreview.setVisibility(View.VISIBLE);
-            }
         });
 
         dialog.setOnDismissListener(d -> stepImageUri = null);
         dialog.show();
+    }
+
+    // Phương thức hiển thị hình ảnh (hiện có hoặc mới)
+    private void displayStepImage(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .thumbnail(0.25f)
+                    .placeholder(R.drawable.rice)
+                    .error(R.drawable.rice)
+                    .into(imageViewStepPreview);
+            imageViewStepPreview.setVisibility(View.VISIBLE);
+            Log.d("StepImage", "Displaying existing image: " + imageUrl);
+        } else {
+            imageViewStepPreview.setVisibility(View.GONE);
+            Log.d("StepImage", "No existing image to display");
+        }
+    }
+
+    // Phương thức hiển thị hình ảnh mới được chọn (step.getImage())
+    private void displayStepImage(Uri imageUri) {
+        if (imageUri != null) {
+            Glide.with(context)
+                    .load(imageUri)
+                    .thumbnail(0.25f)
+                    .placeholder(R.drawable.rice)
+                    .error(R.drawable.rice)
+                    .into(imageViewStepPreview);
+            imageViewStepPreview.setVisibility(View.VISIBLE);
+            Log.d("StepImage", "Displaying new image from URI: " + imageUri.toString());
+        } else {
+            imageViewStepPreview.setVisibility(View.GONE);
+            Log.d("StepImage", "No new image to display");
+        }
+    }
+
+    // Cập nhật stepImageUri và hiển thị ảnh mới(Uri)
+    public void setStepImageUri(Uri uri) {
+        this.stepImageUri = uri;
+        displayStepImage(stepImageUri); // Cập nhật giao diện ngay khi có ảnh mới
     }
 
     private void updateStepList(CookingStep step, int position) {
@@ -157,10 +186,6 @@ public class StepDialogManager {
             Log.d("StepList", "Updated step at position " + position + ", Image: " + step.getImages());
         }
         onUpdateCallback.run();
-    }
-
-    public void setStepImageUri(Uri uri) {
-        this.stepImageUri = uri;
     }
 
     private void runOnUiThread(Runnable action) {

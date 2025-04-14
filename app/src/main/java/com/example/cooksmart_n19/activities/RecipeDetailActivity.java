@@ -181,8 +181,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (mAuth.getCurrentUser() != null) {
             Intent intent = new Intent(this, PrepareIngredientsActivity.class);
             intent.putExtra("recipe_id", recipe.getRecipeId());
-            startActivity(intent);
-            recipeRating.setText(String.format("%.1f (%d đánh giá)", recipe.getAverageRating(), recipe.getRatingCount()));
+            startActivityForResult(intent, 123);
         } else {
             Toast.makeText(this, "Vui lòng đăng nhập trước khi bắt đầu nấu ăn", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
@@ -192,7 +191,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && requestCode == 123) {
             displayRecipeDetails();
         }
     }

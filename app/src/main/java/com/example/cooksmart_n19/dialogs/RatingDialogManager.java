@@ -1,6 +1,7 @@
 package com.example.cooksmart_n19.dialogs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,8 +74,6 @@ public class RatingDialogManager {
                         @Override
                         public void onSuccess(double averageRating, int ratingCount) {
                             Toast.makeText(context, "Đánh giá của bạn đã được gửi", Toast.LENGTH_SHORT).show();
-                            callback.onRatingSubmitted(averageRating, ratingCount);
-
                             dialog.dismiss();
                         }
 

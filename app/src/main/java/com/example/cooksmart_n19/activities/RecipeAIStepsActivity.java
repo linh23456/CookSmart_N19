@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.cooksmart_n19.R;
 import com.example.cooksmart_n19.adapters.StepPagerAdapter;
-import com.example.cooksmart_n19.fragments.AssistantFragment;
 
 import java.util.ArrayList;
 import java.util.Locale;

@@ -115,6 +115,8 @@ public class LoginActivity extends AppCompatActivity {
     private void toggleAuthMode() {
         isLoginMode = !isLoginMode;
         updateUIMode();
+        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        startActivity(intent);
     }
 
     private void updateUIMode() {

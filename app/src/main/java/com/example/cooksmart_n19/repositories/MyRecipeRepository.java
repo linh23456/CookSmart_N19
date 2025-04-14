@@ -43,9 +43,9 @@ public class MyRecipeRepository {
             recipe.setRecipeId(recipeId);
             recipe.setAuthorId(userId);
             recipe.setCreatedAt(Timestamp.now());
-            recipe.setUpdatedAt(Timestamp.now());
-        }
 
+        }
+        recipe.setUpdatedAt(Timestamp.now());
         // Sử dụng batch để lưu dữ liệu đồng bộ
         WriteBatch batch = db.batch();
 
