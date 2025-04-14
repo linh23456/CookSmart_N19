@@ -37,6 +37,12 @@
             android:layout_height="48dp"
             android:entries="@array/diet_options"/>
 
+        <ImageButton
+            android:id="@+id/btn_mic"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_mic"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
         <!-- Nút tạo công thức -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_generate"

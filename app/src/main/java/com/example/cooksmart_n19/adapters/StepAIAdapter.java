@@ -23,6 +23,10 @@ public class StepAIAdapter extends RecyclerView.Adapter<StepAIAdapter.StepViewHo
         this.imageUrl = imageUrl;
     }
 
+    public List<String> getSteps() {
+        return steps;
+    }
+
     @NonNull
     @Override
     public StepViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

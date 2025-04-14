@@ -10,15 +10,39 @@
         android:layout_height="match_parent"
         android:padding="16dp"/>
 
-    <Button
-        android:id="@+id/btn_restart"
-        android:layout_width="wrap_content"
+    <!-- Thêm nút play/pause vào layout activity_recipe_aisteps.xml -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chọn lại"/>
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        android:elevation="8dp">
 
-    <Button
-        android:id="@+id/btn_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tiếp theo"/>
+        <Button
+            android:id="@+id/btn_restart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chọn lại"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageButton
+            android:id="@+id/btn_play_pause"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_play"
+            android:layout_marginHorizontal="8dp"/>
+
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiếp theo"/>
+
+    </LinearLayout>
+
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

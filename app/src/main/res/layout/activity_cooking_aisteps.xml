@@ -15,13 +15,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:padding="8dp">
 
         <Button
             android:id="@+id/btnPrevious"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bước trước"
+            android:layout_margin="8dp"/>
+
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_play"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"/>
 
         <Button
@@ -31,15 +40,14 @@
             android:text="Bước tiếp theo"
             android:layout_margin="8dp"/>
 
-
-
     </LinearLayout>
+
     <Button
         android:id="@+id/btnExit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Thoát"
-        android:layout_margin="8dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/red"/>
 
 </LinearLayout>
